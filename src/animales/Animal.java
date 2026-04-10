@@ -1,6 +1,6 @@
 package animales;
 
-public class Animal {
+public abstract class Animal {
     protected String nombre;
     protected Especie especie;
     protected Genero genero;
