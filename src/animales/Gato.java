@@ -6,23 +6,11 @@ public class Gato extends Animal {
         super(nombre, especie,  genero);
     }
 
-    @Override
-    public void comer() {
-
-    }
-
-    @Override
-    public void bañarse() {
-
-    }
-
-    @Override
-    public void jugar() {
-
-    }
 
     @Override
     public void pasear() {
-
+        energia -= 15;
+        felicidad += 20;
+        limitarValores();
     }
 }

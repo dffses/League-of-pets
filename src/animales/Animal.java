@@ -26,7 +26,7 @@ public abstract class Animal {
         limitarValores();
     }
 
-    public void banar() {
+    public void bañar() {
         limpieza = 100;
         felicidad += 5;
         limitarValores();
