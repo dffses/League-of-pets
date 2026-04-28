@@ -6,41 +6,44 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Menu extends JFrame {
-
     JFrame menu_principal;
+    JPanel contenedor; // El "padre" de todos los paneles
+    CardLayout cards;
 
     public Menu() {
         menu_principal = new JFrame("League of pets");
         menu_principal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         menu_principal.setSize(600, 500);
-        menu_principal.setLocationRelativeTo(null);
 
-        mostrarMenu();
+        cards = new CardLayout();
+        contenedor = new JPanel(cards);
+
+        // Añadimos el menú inicial
+        contenedor.add(crearMenuInicio(), "MENU_INICIO");
+
+        menu_principal.add(contenedor);
+        menu_principal.setLocationRelativeTo(null);
         menu_principal.setVisible(true);
     }
 
-    public void mostrarMenu() {
-        JPanel panelMenu=new JPanel();
+    private JPanel crearMenuInicio() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        JButton boton = new JButton("ABRIR INTERFAZ");
 
-        panelMenu=new JPanel();
-        panelMenu.setBackground(Color.DARK_GRAY);
-        panelMenu.setLayout(new GridLayout());
+        boton.addActionListener(e -> {
+            // AQUÍ ESTÁ EL TRUCO:
+            // 1. Creamos la interfaz
+            Interfaz miInterfaz = new Interfaz(cards, contenedor);
 
-        JButton botonIniciar=new JButton("INICIAR LEAGUE");
-        botonIniciar.setPreferredSize(new Dimension(200,50));
+            contenedor.add(miInterfaz, "INTERFAZ_PRINCIPAL");
+            cards.show(contenedor, "INTERFAZ_PRINCIPAL");
 
-
-        botonIniciar.addActionListener(e -> {
-            menu_principal.getContentPane().removeAll(); // Borramos el menú
-            menu_principal.add(new Packman());       // Añadimos la clase del juego
-            menu_principal.revalidate();                // Refrescamos la estructura
-            menu_principal.repaint();                   // Redujamos todo
-            menu_principal.pack();                      // Ajustamos el tamaño
-            menu_principal.requestFocusInWindow();      // Importante para que el teclado funcione
+            // Refresco de seguridad
+            contenedor.revalidate();
+            contenedor.repaint();
         });
 
-        panelMenu.add(botonIniciar);
-        menu_principal.add(panelMenu);
+        panel.add(boton);
+        return panel;
     }
-
 }
