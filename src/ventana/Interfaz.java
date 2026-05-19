@@ -1,15 +1,10 @@
 package ventana;
 
-import javax.smartcardio.Card;
-import javax.swing.*;
-import java.awt.*;
-
 import javax.swing.*;
 import java.awt.*;
 
 public class Interfaz extends JPanel {
 
-    // Guardamos las referencias del menú principal para poder cambiar de pantalla
     public Interfaz(CardLayout cardLayout, JPanel contenedorPrincipal) {
         this.setLayout(new BorderLayout());
         this.setBackground(Color.DARK_GRAY);
@@ -21,11 +16,21 @@ public class Interfaz extends JPanel {
         JButton btnIzquierda = new JButton("TIENDA");
         JButton btnDerecha = new JButton("JUEGOS");
 
-        // Acción del botón JUEGOS (Derecha)
-        btnDerecha.addActionListener(e -> {
-            // 1. Creamos la pantalla de la cuadrícula
-            CuadriculaCanales pantallaJuegos = new CuadriculaCanales(cardLayout, contenedorPrincipal);
+        // --- Acción del botón TIENDA (Izquierda) ---
+        // Dentro de la clase Interfaz, en el listener del btnIzquierda:
+        btnIzquierda.addActionListener(e -> {
+            // Ahora le pasamos cardLayout y contenedorPrincipal
+            TiendaComida pantallaTienda = new TiendaComida(cardLayout, contenedorPrincipal);
 
+            contenedorPrincipal.add(pantallaTienda, "PANTALLA_TIENDA");
+            cardLayout.show(contenedorPrincipal, "PANTALLA_TIENDA");
+            contenedorPrincipal.revalidate();
+            contenedorPrincipal.repaint();
+        });
+
+        // --- Acción del botón JUEGOS (Derecha) ---
+        btnDerecha.addActionListener(e -> {
+            SeleccionJuegos pantallaJuegos = new SeleccionJuegos(cardLayout, contenedorPrincipal);
             contenedorPrincipal.add(pantallaJuegos, "PANTALLA_CUADRICULA");
             cardLayout.show(contenedorPrincipal, "PANTALLA_CUADRICULA");
         });

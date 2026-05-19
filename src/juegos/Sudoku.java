@@ -3,7 +3,7 @@ package juegos;
 
 import java.util.*;
 
-public class Sudoku {
+public class Sudoku  {
     private int [][] tablero;
     private int [][] solucion;
     private Random aleatorio = new Random();

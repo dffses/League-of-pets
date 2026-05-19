@@ -35,6 +35,7 @@ public class Menu extends JFrame {
             // 1. Creamos la interfaz
             Interfaz miInterfaz = new Interfaz(cards, contenedor);
 
+
             contenedor.add(miInterfaz, "INTERFAZ_PRINCIPAL");
             cards.show(contenedor, "INTERFAZ_PRINCIPAL");
 

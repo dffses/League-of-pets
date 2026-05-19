@@ -1,8 +1,8 @@
 import juegos.Sudoku;
+import ventana.Menu;
 
 public class Main {
     public static void main(String[] args) {
-        Sudoku juego = new Sudoku();
-        juego.jugar();
+        Menu m=new Menu();
     }
 }

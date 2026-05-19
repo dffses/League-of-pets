@@ -19,6 +19,7 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
     private ArrayList<Plataforma> plataformas;
     private Random aleatorio = new Random();
     private Timer temporizador;
+
     public Saltitos() {
         temporizador = new Timer(20, this);
         temporizador.start();
@@ -115,15 +116,5 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
 
     public void keyTyped(KeyEvent e) {
     }
-
-//
-//    JFrame ventana = new JFrame("Mi Juego Doodle");
-//    Saltitos juego = new Saltitos();
-//        ventana.add(juego);
-//        ventana.setSize(400, 600);
-//        ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        ventana.setResizable(false);
-//        ventana.setLocationRelativeTo(null);
-//        ventana.setVisible(true);
-//
 }
+
