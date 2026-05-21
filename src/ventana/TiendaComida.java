@@ -16,8 +16,8 @@ public class TiendaComida extends JPanel {
         // --- 1. BOTÓN VOLVER (Norte) ---
         JButton btnVolver = new JButton("⬅ Volver al Menú");
         btnVolver.addActionListener(e -> {
-            // Al usar .first() saltas directamente al menú principal sin importar el historial
-            cardLayout.first(contenedorPrincipal);
+            // Te lleva de vuelta a la interfaz donde está tu mascota y los botones principales
+            cardLayout.show(contenedorPrincipal, "INTERFAZ_PRINCIPAL");
         });
 
         // Panel pequeño para que el botón no ocupe todo el ancho

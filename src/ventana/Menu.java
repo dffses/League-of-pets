@@ -1,24 +1,23 @@
 package ventana;
 
-import juegos.Packman;
-
 import javax.swing.*;
 import java.awt.*;
 
 public class Menu extends JFrame {
     JFrame menu_principal;
-    JPanel contenedor; // El "padre" de todos los paneles
+    JPanel contenedor;
     CardLayout cards;
-
+    /**
+     * Configura el marco principal e inserta la pantalla inicial de bienvenida.
+     */
     public Menu() {
         menu_principal = new JFrame("League of pets");
         menu_principal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        menu_principal.setSize(600, 500);
+        menu_principal.setSize(750, 580); // Tamaño ideal adaptado para las tres mascotas
 
         cards = new CardLayout();
         contenedor = new JPanel(cards);
 
-        // Añadimos el menú inicial
         contenedor.add(crearMenuInicio(), "MENU_INICIO");
 
         menu_principal.add(contenedor);
@@ -28,18 +27,15 @@ public class Menu extends JFrame {
 
     private JPanel crearMenuInicio() {
         JPanel panel = new JPanel(new GridBagLayout());
-        JButton boton = new JButton("ABRIR INTERFAZ");
+        JButton boton = new JButton("LEAGUE_OF_PETS");
+        boton.setFont(new Font("Arial", Font.BOLD, 16));
 
         boton.addActionListener(e -> {
-            // AQUÍ ESTÁ EL TRUCO:
-            // 1. Creamos la interfaz
-            Interfaz miInterfaz = new Interfaz(cards, contenedor);
+            // Pasamos 'this' como referencia del Menú raíz
+            SeleccionMascota pantallaMascota = new SeleccionMascota(cards, contenedor, this);
+            contenedor.add(pantallaMascota, "PANTALLA_SELECCION_MASCOTA");
+            cards.show(contenedor, "PANTALLA_SELECCION_MASCOTA");
 
-
-            contenedor.add(miInterfaz, "INTERFAZ_PRINCIPAL");
-            cards.show(contenedor, "INTERFAZ_PRINCIPAL");
-
-            // Refresco de seguridad
             contenedor.revalidate();
             contenedor.repaint();
         });

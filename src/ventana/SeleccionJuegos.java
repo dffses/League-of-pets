@@ -1,7 +1,7 @@
 package ventana;
 
 import juegos.Packman;
-import juegos.saltitos.Saltitos;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,8 +16,8 @@ public class SeleccionJuegos extends JPanel {
         // --- 1. BOTÓN VOLVER (Norte) ---
         JButton btnVolver = new JButton("⬅ Volver al Menú");
         btnVolver.addActionListener(e -> {
-            // Te lleva directo a la primera pantalla del contenedor
-            cardLayout.first(contenedorPrincipal);
+            // Te lleva de vuelta a la interfaz donde está tu mascota y los botones principales
+            cardLayout.show(contenedorPrincipal, "INTERFAZ_PRINCIPAL");
         });
 
         // Panel contenedor para que el botón de volver no se estire demasiado
@@ -62,31 +62,50 @@ public class SeleccionJuegos extends JPanel {
         return btn;
     }
 
-    // Lógica para decidir qué juego abrir
+   // Lógica para decidir qué juego abrir
     private void lanzarJuego(String nombre, CardLayout cl, JPanel cont) {
         JPanel juegoSeleccionado;
 
         switch (nombre) {
             case "Packman":
+                // Instanciamos tu Pac-man
                 juegoSeleccionado = new Packman();
+
+                // TRUCO IMPORTANTE PARA PACKMAN: Como necesita usar las flechas del teclado,
+                // le añadimos un botón rápido de "Volver" arriba para no quedarnos atrapados.
+                juegoSeleccionado.setLayout(new BorderLayout());
+                JButton btnVolverPackman = new JButton("⬅ Salir del Juego");
+                btnVolverPackman.addActionListener(e -> cl.show(cont, "PANTALLA_CUADRICULA"));
+                JPanel panelPackmanNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                panelPackmanNorte.setOpaque(false);
+                panelPackmanNorte.add(btnVolverPackman);
+                juegoSeleccionado.add(panelPackmanNorte, BorderLayout.NORTH);
                 break;
+
+            case "Sudoku":
+                // Descomentamos y pasamos los navegadores de pantallas
+                juegoSeleccionado = new juegos.Sudoku(cl, cont);
+                break;
+
+            case "Torrecita":
+                // Descomentamos y pasamos los navegadores de pantallas
+                juegoSeleccionado = new juegos.TorrePastel(cl, cont);
+                break;
+
             case "Saltitos":
-                juegoSeleccionado = new Saltitos();
+                juegoSeleccionado = new juegos.saltitos.Saltitos();
                 break;
-//            case "Sudoku":
-//                juegoSeleccionado = new Sudoku();
-//                break;
-//            case "TorrePastel":
-//                juegoSeleccionado = new TorrePastel();
-//                break;
+
             default:
                 juegoSeleccionado = new JPanel();
                 juegoSeleccionado.add(new JLabel("Juego de " + nombre + " en desarrollo"));
         }
 
+        // Añadimos el juego dinámicamente al contenedor y cambiamos de pantalla
         cont.add(juegoSeleccionado, "PANTALLA_JUEGO");
         cl.show(cont, "PANTALLA_JUEGO");
 
+        // Esto es vital para que Pac-Man detecte el teclado inmediatamente al abrirse
         juegoSeleccionado.setFocusable(true);
         juegoSeleccionado.requestFocusInWindow();
     }

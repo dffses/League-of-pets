@@ -8,8 +8,11 @@ public abstract class Animal {
     protected int felicidad;
     protected int limpieza;
     protected int energia;
+    //atributos que añadí nuevos
+    protected int nivel;
+    protected int experiencia;
 
-    public Animal(String nombre, Especie especie, Genero genero) {
+    public Animal(String nombre, Especie especie, Genero genero, int hambre, int felicidad, int limpieza, int energia, int nivel, int experiencia) {
         this.nombre = nombre;
         this.especie = especie;
         this.genero = genero;
@@ -17,34 +20,53 @@ public abstract class Animal {
         this.felicidad = 50;
         this.limpieza = 50;
         this.energia = 50;
+        this.nivel = 1;
+        this.experiencia = 0;
     }
 
+    /**
+     * Incrementa la experiencia de la mascota. Si alcanza 100 puntos, sube de nivel.
+     */
+    public void ganarExperiencia(int cantidad) {
+        this.experiencia += cantidad;
+        if (this.experiencia >= 100) {
+            this.nivel++;
+            this.experiencia = 0; // se resetea la experiencia para el siguiente nivel
+            System.out.println("¡Genial! " + nombre + " ha subido al nivel " + nivel);
+        }
+    }
 
     public void comer() {
         hambre -= 10;
         felicidad += 5;
+        ganarExperiencia(15);
         limitarValores();
     }
 
     public void bañar() {
         limpieza = 100;
         felicidad += 5;
+        ganarExperiencia(10);
         limitarValores();
     }
 
     public void pasear() {
         energia -= 10;
         felicidad += 10;
+        ganarExperiencia(25);
         limitarValores();
     }
 
     public void jugar() {
         energia -= 10;
         felicidad += 15;
+        ganarExperiencia(30);
         limitarValores();
     }
 
-
+    /**
+     * Método interno para evitar que los atributos superen 100 o bajen de 0.
+     */
     protected void limitarValores() {
         hambre = Math.max(0, Math.min(100, hambre));
         felicidad = Math.max(0, Math.min(100, felicidad));
@@ -52,7 +74,9 @@ public abstract class Animal {
         energia = Math.max(0, Math.min(100, energia));
     }
 
-
+    /**
+     * Simula el paso del tiempo reduciendo paulatinamente sus barras vitales.
+     */
     public void actualizarEstado() {
         hambre += 2;
         energia -= 2;
@@ -60,7 +84,7 @@ public abstract class Animal {
         limitarValores();
     }
 
-
+    //getters y setters
     public String getNombre() {
         return nombre;
     }

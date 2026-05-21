@@ -1,4 +1,4 @@
-import juegos.Sudoku;
+
 import ventana.Menu;
 
 public class Main {
