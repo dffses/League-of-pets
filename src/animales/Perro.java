@@ -3,7 +3,7 @@ package animales;
 public class Perro extends Animal {
 
     public Perro(String nombre, Especie especie, Genero genero, int hambre, int felicidad, int limpieza, int energia, int nivel, int experiencia) {
-        super(nombre, especie, genero, hambre, felicidad, limpieza, energia, nivel, experiencia);
+        super(nombre, especie, genero);
     }
     /**
      *El perro es extremadamente juguetón, por lo que su acción de

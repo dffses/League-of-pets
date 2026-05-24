@@ -8,6 +8,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Random;
+// Importamos la clase Animal (cambia la ruta del paquete si es necesario)
+import animales.Animal;
 
 public class Saltitos extends JPanel implements ActionListener, KeyListener {
 
@@ -20,7 +22,17 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
     private Random aleatorio = new Random();
     private Timer temporizador;
 
-    public Saltitos() {
+    // NUEVOS ATRIBUTOS: Para el control de monedas y tiempo
+    private Animal mascotaActual;
+    private long tiempoInicio;
+
+    // MODIFICADO: El constructor ahora recibe a tu mascota
+    public Saltitos(Animal mascota) {
+        this.mascotaActual = mascota;
+
+        // Guardamos el momento exacto en el que empieza la partida (en milisegundos)
+        this.tiempoInicio = System.currentTimeMillis();
+
         temporizador = new Timer(20, this);
         temporizador.start();
 
@@ -56,7 +68,6 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
         y += velocidadY;
         x += velocidadX;
 
-
         if (velocidadY > 0) {
             for (Plataforma p : plataformas) {
                 if (x + 40 > p.x && x < p.x + p.ancho &&
@@ -66,14 +77,12 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
             }
         }
 
-
         if (y < 250) {
             int diferencia = 250 - y;
             y = 250;
 
             for (Plataforma p : plataformas) {
                 p.y += diferencia;
-
 
                 if (p.y > 600) {
                     p.y = 0;
@@ -82,15 +91,40 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
             }
         }
 
-
         if (x < 0) x = 0;
         if (x > 360) x = 360;
 
-
+        // MODIFICADO: Aquí es cuando el jugador pierde (Game Over)
         if (y > 650) {
             temporizador.stop();
+
+            // 1. Calculamos cuánto tiempo ha pasado en segundos
+            long tiempoFin = System.currentTimeMillis();
+            long tiempoJugadoMilisegundos = tiempoFin - tiempoInicio;
+            int segundosJugados = (int) (tiempoJugadoMilisegundos / 1000);
+
+            // 2. Calculamos las monedas: 50 monedas por cada 60 segundos (1 minuto)
+            int bloquesDeUnMinuto = segundosJugados / 60;
+            int monedasGanadas = bloquesDeUnMinuto * 50;
+
+            // 3. Entregamos la recompensa si ha sobrevivido lo suficiente
+            if (monedasGanadas > 0) {
+                mascotaActual.ganarMonedas(monedasGanadas);
+                JOptionPane.showMessageDialog(this,
+                        "¡Game Over!\nHas aguantado " + segundosJugados + " segundos.\nGanaste: " + monedasGanadas + " monedas 🪙");
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "¡Game Over!\nHas aguantado " + segundosJugados + " segundos.\nNecesitas aguantar al menos 60 segundos para ganar monedas.",
+                        "Fin de la partida", JOptionPane.INFORMATION_MESSAGE);
+            }
+
+            // Valores de reinicio originales del juego
             y = 300;
             velocidadY = 0;
+
+            // Opcional: Si quieres que al reiniciar la misma pantalla vuelva a contar el tiempo desde cero:
+            // this.tiempoInicio = System.currentTimeMillis();
+            // temporizador.start();
         }
 
         repaint();
@@ -114,7 +148,6 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
         }
     }
 
-    public void keyTyped(KeyEvent e) {
-    }
+    public void keyTyped(KeyEvent e) {}
 }
 

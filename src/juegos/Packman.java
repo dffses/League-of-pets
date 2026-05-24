@@ -3,6 +3,8 @@ package juegos;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+// Importamos la clase Animal (cambia la ruta del paquete si es necesario)
+import animales.Animal;
 
 public class Packman extends JPanel implements ActionListener, KeyListener {
     // --- Configuración Visual ---
@@ -14,6 +16,12 @@ public class Packman extends JPanel implements ActionListener, KeyListener {
     private int puntos = 0;
     private int tiempoRestante = 30; // Segundos para jugar
     private boolean juegoTerminado = false;
+
+    // NUEVOS ATRIBUTOS: Para conectar con la mascota y controlar la victoria
+    private Animal mascotaActual;
+    private int frutasRestantes = 0;
+    private Timer relojJuego; // Lo hacemos atributo de clase para poder detenerlo desde fuera del constructor
+    private boolean victoria = false; // Bandera para saber si ganó o perdió por tiempo
 
     // Mapa del laberinto: 1 = Pared, 0 = Fruta, 2 = Vacío
     private int[][] laberinto = {
@@ -29,7 +37,13 @@ public class Packman extends JPanel implements ActionListener, KeyListener {
             {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
 
-    public Packman() {
+    // MODIFICADO: El constructor ahora recibe a tu mascota
+    public Packman(Animal mascota) {
+        this.mascotaActual = mascota;
+
+        // Contamos cuántas frutas hay inicialmente en el mapa
+        contarFrutasIniciales();
+
         // Configuramos el tamaño de la ventana
         setPreferredSize(new Dimension(COLUMNAS * TAMANO_CELDA, FILAS * TAMANO_CELDA + 50));
         setBackground(Color.BLACK);
@@ -37,15 +51,29 @@ public class Packman extends JPanel implements ActionListener, KeyListener {
         addKeyListener(this);
 
         // Temporizador: se ejecuta cada 1000ms (1 segundo)
-        Timer relojJuego = new Timer(1000, e -> {
+        relojJuego = new Timer(1000, e -> {
             if (tiempoRestante > 0) {
                 tiempoRestante--;
             } else {
                 juegoTerminado = true;
+                relojJuego.stop(); // Detenemos el reloj si se acaba el tiempo
             }
             repaint(); // Redibuja la pantalla para actualizar el tiempo
         });
         relojJuego.start();
+    }
+
+    /**
+     * Cuenta cuántas celdas tienen el valor '0' (fruta) al iniciar el juego.
+     */
+    private void contarFrutasIniciales() {
+        for (int f = 0; f < FILAS; f++) {
+            for (int c = 0; c < COLUMNAS; c++) {
+                if (laberinto[f][c] == 0) {
+                    frutasRestantes++;
+                }
+            }
+        }
     }
 
     @Override
@@ -72,23 +100,29 @@ public class Packman extends JPanel implements ActionListener, KeyListener {
         g.setColor(Color.YELLOW);
         g.fillArc(colJugador * TAMANO_CELDA + 5, filaJugador * TAMANO_CELDA + 5, 30, 30, 30, 300);
 
-        // Dibujamos la Interfaz (Puntos y Tiempo)
+        // Dibujamos la Interfaz (Puntos, Frutas y Tiempo)
         g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 18));
+        g.setFont(new Font("Arial", Font.BOLD, 15));
         g.drawString("Puntos: " + puntos, 20, FILAS * TAMANO_CELDA + 30);
-        g.drawString("Tiempo: " + tiempoRestante + "s", 200, FILAS * TAMANO_CELDA + 30);
+        g.drawString("Frutas: " + frutasRestantes, 150, FILAS * TAMANO_CELDA + 30);
+        g.drawString("Tiempo: " + tiempoRestante + "s", 300, FILAS * TAMANO_CELDA + 30);
 
-        // Mensaje de fin de juego
+        // MODIFICADO: Mensaje de fin de juego dinámico (Victoria o Derrota)
         if (juegoTerminado) {
-            g.setColor(Color.RED);
             g.setFont(new Font("Arial", Font.BOLD, 40));
-            g.drawString("¡FIN DEL JUEGO!", 120, (FILAS * TAMANO_CELDA) / 2);
+            if (victoria) {
+                g.setColor(Color.GREEN);
+                g.drawString("¡VICTORIA!", 180, (FILAS * TAMANO_CELDA) / 2);
+            } else {
+                g.setColor(Color.RED);
+                g.drawString("¡FIN DEL JUEGO!", 120, (FILAS * TAMANO_CELDA) / 2);
+            }
         }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (juegoTerminado) return; // Si terminó el tiempo, no se mueve
+        if (juegoTerminado) return; // Si terminó el juego, no se mueve
 
         int nuevaFila = filaJugador;
         int nuevaCol = colJugador;
@@ -108,23 +142,30 @@ public class Packman extends JPanel implements ActionListener, KeyListener {
             if (laberinto[filaJugador][colJugador] == 0) {
                 laberinto[filaJugador][colJugador] = 2; // Marcamos como vacío
                 puntos += 10;
+                frutasRestantes--; // Restamos una fruta del contador
+
+                // NUEVA LÓGICA: Comprobamos si ya no quedan frutas en el mapa
+                if (frutasRestantes == 0) {
+                    juegoTerminado = true;
+                    victoria = true;
+                    relojJuego.stop(); // Paramos el temporizador de inmediato
+
+                    // Otorgamos la recompensa personalizada (ej: 100 monedas)
+                    int recompensaMonedas = 100;
+                    mascotaActual.ganarMonedas(recompensaMonedas);
+
+                    JOptionPane.showMessageDialog(this,
+                            "¡Felicidades! Has recolectado todas las frutas.\n¡Tu mascota ha ganado " + recompensaMonedas + " monedas! 🪙",
+                            "¡Victoria!", JOptionPane.INFORMATION_MESSAGE);
+                }
             }
         }
         repaint(); // Actualiza la posición visual
     }
 
-    // Métodos obligatorios que no necesitamos para este juego simple
     public void keyReleased(KeyEvent e) {}
     public void keyTyped(KeyEvent e) {}
     public void actionPerformed(ActionEvent e) {}
 
-    public static void main(String[] args) {
-        JFrame ventana = new JFrame("Pac-Man Frutas: Carrera contra el Tiempo");
-        Packman juego = new Packman();
-        ventana.add(juego);
-        ventana.pack();
-        ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        ventana.setLocationRelativeTo(null);
-        ventana.setVisible(true);
-    }
+    // Eliminamos o ignoramos el main original para integrarlo mediante el constructor con mascota
 }

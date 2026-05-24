@@ -1,5 +1,9 @@
 package ventana;
 
+import animales.Animal;
+import animales.Especie;
+import animales.Genero;
+
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
@@ -22,13 +26,12 @@ public class SeleccionMascota extends JPanel {
         gbc.gridy = 0;
         gbc.weightx = 1.0;
 
-        //  ¡Selecciona a tu Compañero!
+        // ¡Selecciona a tu Compañero!
         JLabel titulo = new JLabel("¡Selecciona a tu Compañero!", SwingConstants.CENTER);
         titulo.setFont(new Font("Arial", Font.BOLD, 28));
         titulo.setForeground(Color.BLACK);
 
         // Subimos el primer número a 200 para que el título baje bastante
-
         gbc.insets = new Insets(200, 0, 10, 0);
         this.add(titulo, gbc);
 
@@ -44,14 +47,15 @@ public class SeleccionMascota extends JPanel {
         panelMascotas.setOpaque(false); // Transparente para ver el fondo de la tienda
 
         // Creamos los botones gigantes con los nombres arriba y subrayados transparentes
+        // Pasamos también la especie correspondiente para recuperarla en la acción
         JButton btnPerro = crearBotonTransparente("Bran", "bran_perro.png");
         JButton btnGato = crearBotonTransparente("Shasha", "shasha_gato.png");
         JButton btnCocodrilo = crearBotonTransparente("Steve", "cocodrilo.png");
 
-        // Acciones al hacer clic
-        btnPerro.addActionListener(e -> avanzarAInterfaz("Bran", "bran_perro.png", cardLayout, contenedorPrincipal));
-        btnGato.addActionListener(e -> avanzarAInterfaz("Shasha", "shasha_gato.png", cardLayout, contenedorPrincipal));
-        btnCocodrilo.addActionListener(e -> avanzarAInterfaz("Steve", "cocodrilo.png", cardLayout, contenedorPrincipal));
+        // Acciones al hacer clic asociando cada mascota a su Especie correspondiente
+        btnPerro.addActionListener(e -> avanzarAInterfaz("Bran", Especie.PERRO, "bran_perro.png", cardLayout, contenedorPrincipal));
+        btnGato.addActionListener(e -> avanzarAInterfaz("Shasha", Especie.GATO, "shasha_gato.png", cardLayout, contenedorPrincipal));
+        btnCocodrilo.addActionListener(e -> avanzarAInterfaz("Steve", Especie.COCODRILO, "cocodrilo.png", cardLayout, contenedorPrincipal));
 
         panelMascotas.add(btnPerro);
         panelMascotas.add(btnGato);
@@ -98,8 +102,18 @@ public class SeleccionMascota extends JPanel {
         return boton;
     }
 
-    private void avanzarAInterfaz(String nombre, String ruta, CardLayout cl, JPanel cont) {
-        Interfaz miInterfaz = new Interfaz(cl, cont, nombre, ruta);
+    /**
+     * MODIFICADO: Ahora el método recibe la Especie además del nombre y la ruta,
+     * permitiendo instanciar el objeto Animal con todos sus requisitos del constructor.
+     */
+    private void avanzarAInterfaz(String nombre, Especie especie, String ruta, CardLayout cl, JPanel cont) {
+        // Creamos la mascota usando los tres parámetros obligatorios: nombre, especie y un género por defecto
+        // (Modifica Especie.PERRO, Especie.GATO, etc., si en tu Enum se llaman de otra forma)
+        Animal mascotaNueva = new Animal(nombre, especie, Genero.Macho);
+
+        // Enviamos el objeto con sus datos inicializados (y monedas cargadas del XML) a la interfaz
+        Interfaz miInterfaz = new Interfaz(cl, cont, mascotaNueva, ruta);
+
         cont.add(miInterfaz, "INTERFAZ_PRINCIPAL");
         cl.show(cont, "INTERFAZ_PRINCIPAL");
         cont.revalidate();

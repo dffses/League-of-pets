@@ -1,5 +1,6 @@
 package ventana;
 
+import animales.Animal;
 import juegos.Packman;
 
 
@@ -65,11 +66,11 @@ public class SeleccionJuegos extends JPanel {
    // Lógica para decidir qué juego abrir
     private void lanzarJuego(String nombre, CardLayout cl, JPanel cont) {
         JPanel juegoSeleccionado;
-
+        Animal a=null;
         switch (nombre) {
             case "Packman":
                 // Instanciamos tu Pac-man
-                juegoSeleccionado = new Packman();
+                juegoSeleccionado = new Packman(a);
 
                 // TRUCO IMPORTANTE PARA PACKMAN: Como necesita usar las flechas del teclado,
                 // le añadimos un botón rápido de "Volver" arriba para no quedarnos atrapados.
@@ -84,16 +85,16 @@ public class SeleccionJuegos extends JPanel {
 
             case "Sudoku":
                 // Descomentamos y pasamos los navegadores de pantallas
-                juegoSeleccionado = new juegos.Sudoku(cl, cont);
+                juegoSeleccionado = new juegos.Sudoku(cl, cont,a);
                 break;
 
             case "Torrecita":
                 // Descomentamos y pasamos los navegadores de pantallas
-                juegoSeleccionado = new juegos.TorrePastel(cl, cont);
+                juegoSeleccionado = new juegos.TorrePastel(cl, cont,a);
                 break;
 
             case "Saltitos":
-                juegoSeleccionado = new juegos.saltitos.Saltitos();
+                juegoSeleccionado = new juegos.saltitos.Saltitos(a);
                 break;
 
             default:

@@ -3,7 +3,7 @@ package animales;
 public class Gato extends Animal {
 
     public Gato(String nombre, Especie especie, Genero genero, int hambre, int felicidad, int limpieza, int energia, int nivel, int experiencia) {
-        super(nombre, especie, genero, hambre, felicidad, limpieza, energia, nivel, experiencia);
+        super(nombre, especie, genero);
     }
     /**
      *A los gatos les cuesta más salir a pasear,
