@@ -239,4 +239,70 @@ public class Animal {
                 ", nivel=" + nivel +
                 '}';
     }
+
+    private static String obtenerTextoEtiqueta(Document doc, String etiqueta) {
+        NodeList lista = doc.getElementsByTagName(etiqueta);
+        if (lista.getLength() > 0) {
+            return lista.item(0).getTextContent();
+        }
+        return "";
+    }
+
+
+    /**
+     * MÉTODO ESTÁTICO DE CARGA POLIMÓRFICA
+     * Lee el archivo XML y reconstruye la subclase exacta del animal guardado.
+     */
+    public static Animal cargarPartidaXML() {
+        File archivo = new File("partida.xml");
+        if (!archivo.exists()) {
+            return null; // No hay partida previa
+        }
+
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(archivo);
+            doc.getDocumentElement().normalize();
+
+            // 1. Extraer los datos de configuración base
+            String nombre = obtenerTextoEtiqueta(doc, "nombre");
+            Especie especie = Especie.valueOf(obtenerTextoEtiqueta(doc, "especie"));
+            Genero genero = Genero.valueOf(obtenerTextoEtiqueta(doc, "genero"));
+
+            // 2. Extraer las estadísticas vitales
+            int hambre = Integer.parseInt(obtenerTextoEtiqueta(doc, "hambre"));
+            int felicidad = Integer.parseInt(obtenerTextoEtiqueta(doc, "felicidad"));
+            int limpieza = Integer.parseInt(obtenerTextoEtiqueta(doc, "limpieza"));
+            int energia = Integer.parseInt(obtenerTextoEtiqueta(doc, "energia"));
+            int nivel = Integer.parseInt(obtenerTextoEtiqueta(doc, "nivel"));
+            int experiencia = Integer.parseInt(obtenerTextoEtiqueta(doc, "experiencia"));
+            int monedas = Integer.parseInt(obtenerTextoEtiqueta(doc, "monedas"));
+
+            // 3. Crear la instancia de la subclase correspondiente según la Especie
+            Animal animalCargado;
+            switch (especie) {
+                case PERRO:
+                    animalCargado = new Perro(nombre, especie, genero, hambre, felicidad, limpieza, energia, nivel, experiencia, monedas);
+                    break;
+                case GATO:
+                    animalCargado = new Gato(nombre, especie, genero, hambre, felicidad, limpieza, energia, nivel, experiencia, monedas);
+                    break;
+                case COCODRILO:
+                    animalCargado = new Cocodrilo(nombre, especie, genero, hambre, felicidad, limpieza, energia, nivel, experiencia, monedas);
+                    break;
+                default:
+                    // Por si acaso tienes más especies en tu enum
+                    animalCargado = new Animal(nombre, especie, genero);
+                    break;
+            }
+
+            System.out.println("¡Mascota " + especie + " recuperada del XML con éxito!");
+            return animalCargado;
+
+        } catch (Exception e) {
+            System.out.println("Error al cargar la partida (se ignorará el archivo): " + e.getMessage());
+            return null;
+        }
+    }
 }

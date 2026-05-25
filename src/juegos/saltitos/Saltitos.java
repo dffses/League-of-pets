@@ -26,9 +26,18 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
     private Animal mascotaActual;
     private long tiempoInicio;
 
-    // MODIFICADO: El constructor ahora recibe a tu mascota
-    public Saltitos(Animal mascota) {
+    // MODIFICADO: Añadimos referencias para la navegación por pantallas
+    private CardLayout cl;
+    private JPanel cont;
+
+    // MODIFICADO: El constructor ahora recibe CardLayout y el contenedor principal, igual que el Sudoku
+    public Saltitos(CardLayout cl, JPanel cont, Animal mascota) {
+        this.cl = cl;
+        this.cont = cont;
         this.mascotaActual = mascota;
+
+        // Fijamos BorderLayout en este panel principal para separar el botón del área de juego
+        this.setLayout(new BorderLayout());
 
         // Guardamos el momento exacto en el que empieza la partida (en milisegundos)
         this.tiempoInicio = System.currentTimeMillis();
@@ -40,24 +49,43 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
         this.setFocusable(true);
         this.setFocusTraversalKeysEnabled(false);
 
+        // --- DISEÑO CALCADO DE SUDOKU: Cabecera informativa y botón de huida rápida ---
+        JPanel panelNorte = new JPanel(new BorderLayout());
+        panelNorte.setBackground(new Color(240, 240, 240));
+
+        JButton btnVolver = new JButton("⬅ Salir de Saltitos");
+        btnVolver.addActionListener(e -> {
+            temporizador.stop(); // Paramos el bucle del juego al salir
+            cl.show(cont, "PANTALLA_CUADRICULA");
+        });
+
+        panelNorte.add(btnVolver, BorderLayout.WEST);
+        this.add(panelNorte, BorderLayout.NORTH);
+        // -----------------------------------------------------------------------------
+
         plataformas = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             plataformas.add(new Plataforma(aleatorio.nextInt(330), i * 70));
         }
     }
 
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        // Fondo del área de juego
         g.setColor(new Color(240, 240, 240));
         g.fillRect(0, 0, getWidth(), getHeight());
 
+        // Personaje (Cubo verde)
         g.setColor(Color.GREEN);
         g.fillRect(x, y, 40, 40);
 
+        // Suelo firme inicial
         g.setColor(Color.darkGray);
         g.fillRect(0, 540, 400, 20);
 
+        // Renderizado de las plataformas flotantes
         for (Plataforma p : plataformas) {
             p.dibujar(g);
         }
@@ -118,16 +146,18 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
                         "Fin de la partida", JOptionPane.INFORMATION_MESSAGE);
             }
 
-            // Valores de reinicio originales del juego
-            y = 300;
-            velocidadY = 0;
-
-            // Opcional: Si quieres que al reiniciar la misma pantalla vuelva a contar el tiempo desde cero:
-            // this.tiempoInicio = System.currentTimeMillis();
-            // temporizador.start();
+            // MODIFICADO: En vez de resetear las variables y seguir jugando en bucle,
+            // redirigimos al usuario a la pantalla de selección tal como pedías.
+            cl.show(cont, "PANTALLA_CUADRICULA");
+            return;
         }
 
         repaint();
+    }
+
+    @Override
+    public void keyTyped(KeyEvent keyEvent) {
+
     }
 
     public void keyPressed(KeyEvent e) {
@@ -147,7 +177,4 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
             velocidadX = 0;
         }
     }
-
-    public void keyTyped(KeyEvent e) {}
 }
-

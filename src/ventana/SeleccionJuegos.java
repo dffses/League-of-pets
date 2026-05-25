@@ -70,7 +70,7 @@ public class SeleccionJuegos extends JPanel {
         switch (nombre) {
             case "Packman":
                 // Instanciamos tu Pac-man
-                juegoSeleccionado = new Packman(a);
+                juegoSeleccionado = new Packman(cl,cont,a);
 
                 // TRUCO IMPORTANTE PARA PACKMAN: Como necesita usar las flechas del teclado,
                 // le añadimos un botón rápido de "Volver" arriba para no quedarnos atrapados.
@@ -94,7 +94,7 @@ public class SeleccionJuegos extends JPanel {
                 break;
 
             case "Saltitos":
-                juegoSeleccionado = new juegos.saltitos.Saltitos(a);
+                juegoSeleccionado = new juegos.saltitos.Saltitos(cl,cont , a);
                 break;
 
             default:

@@ -2,17 +2,27 @@ package animales;
 
 public class Cocodrilo extends Animal {
 
+    // Constructor para mascota nueva
     public Cocodrilo(String nombre, Especie especie, Genero genero) {
         super(nombre, especie, genero);
     }
-    /**
-     * Al cocodrilo le gusta el agua más que a otros animales,
-     * así que bañarse le suma más.
-     */
+
+    // Constructor para cargar del XML
+    public Cocodrilo(String nombre, Especie especie, Genero genero, int hambre, int felicidad, int limpieza, int energia, int nivel, int experiencia, int monedas) {
+        super(nombre, especie, genero);
+        this.hambre = hambre;
+        this.felicidad = felicidad;
+        this.limpieza = limpieza;
+        this.energia = energia;
+        this.nivel = nivel;
+        this.experiencia = experiencia;
+        this.monedas = monedas;
+    }
+
     @Override
     public void bañar() {
-        limpieza = 100;
-        felicidad += 15;
+        this.limpieza = 100;
+        this.felicidad += 15;
         ganarExperiencia(15);
         limitarValores();
     }

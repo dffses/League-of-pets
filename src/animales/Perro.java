@@ -2,17 +2,28 @@ package animales;
 
 public class Perro extends Animal {
 
-    public Perro(String nombre, Especie especie, Genero genero, int hambre, int felicidad, int limpieza, int energia, int nivel, int experiencia) {
+    // Constructor para mascota nueva
+    public Perro(String nombre, Especie especie, Genero genero) {
         super(nombre, especie, genero);
     }
-    /**
-     *El perro es extremadamente juguetón, por lo que su acción de
-     * jugar le cansa un poco más, pero eleva su felicidad notablemente.
-     */
+
+    // Constructor para cargar del XML
+    public Perro(String nombre, Especie especie, Genero genero, int hambre, int felicidad, int limpieza, int energia, int nivel, int experiencia, int monedas) {
+        super(nombre, especie, genero);
+        this.hambre = hambre;
+        this.felicidad = felicidad;
+        this.limpieza = limpieza;
+        this.energia = energia;
+        this.nivel = nivel;
+        this.experiencia = experiencia;
+        this.monedas = monedas;
+    }
+
     @Override
     public void jugar() {
-        energia -= 15;
-        felicidad += 20;
+        this.energia -= 15;
+        this.felicidad += 20;
+        ganarExperiencia(30); // Añadido para que también sume exp al jugar
         limitarValores();
     }
 }

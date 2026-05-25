@@ -135,4 +135,6 @@ public class Interfaz extends JPanel {
             g.drawImage(imagenFondo, 0, 0, getWidth(), getHeight(), this);
         }
     }
+
+
 }

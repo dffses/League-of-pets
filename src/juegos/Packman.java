@@ -3,12 +3,10 @@ package juegos;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-// Importamos la clase Animal (cambia la ruta del paquete si es necesario)
+// Importamos la clase Animal
 import animales.Animal;
 
-public class Packman extends JPanel implements ActionListener, KeyListener {
-    // --- Configuración Visual ---
-    private final int TAMANO_CELDA = 40;
+public class Packman extends JPanel implements KeyListener {
     private final int FILAS = 10;
     private final int COLUMNAS = 15;
 
@@ -17,11 +15,14 @@ public class Packman extends JPanel implements ActionListener, KeyListener {
     private int tiempoRestante = 30; // Segundos para jugar
     private boolean juegoTerminado = false;
 
-    // NUEVOS ATRIBUTOS: Para conectar con la mascota y controlar la victoria
     private Animal mascotaActual;
     private int frutasRestantes = 0;
-    private Timer relojJuego; // Lo hacemos atributo de clase para poder detenerlo desde fuera del constructor
-    private boolean victoria = false; // Bandera para saber si ganó o perdió por tiempo
+    private Timer relojJuego;
+    private boolean victoria = false;
+
+    // Referencias para la navegación por pantallas
+    private CardLayout cl;
+    private JPanel cont;
 
     // Mapa del laberinto: 1 = Pared, 0 = Fruta, 2 = Vacío
     private int[][] laberinto = {
@@ -37,35 +38,52 @@ public class Packman extends JPanel implements ActionListener, KeyListener {
             {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
 
-    // MODIFICADO: El constructor ahora recibe a tu mascota
-    public Packman(Animal mascota) {
+    public Packman(CardLayout cl, JPanel cont, Animal mascota) {
+        this.cl = cl;
+        this.cont = cont;
         this.mascotaActual = mascota;
 
-        // Contamos cuántas frutas hay inicialmente en el mapa
+        // Estructura BorderLayout para el botón superior
+        this.setLayout(new BorderLayout());
+        this.setBackground(Color.BLACK);
+
         contarFrutasIniciales();
 
-        // Configuramos el tamaño de la ventana
-        setPreferredSize(new Dimension(COLUMNAS * TAMANO_CELDA, FILAS * TAMANO_CELDA + 50));
-        setBackground(Color.BLACK);
-        setFocusable(true);
-        addKeyListener(this);
+        this.setFocusable(true);
+        this.addKeyListener(this);
 
-        // Temporizador: se ejecuta cada 1000ms (1 segundo)
+        // --- BOTÓN VOLVER ---
+        JPanel panelNorte = new JPanel(new BorderLayout());
+        panelNorte.setBackground(new Color(240, 240, 240));
+
+        JButton btnVolver = new JButton("⬅ Salir del Juego");
+        btnVolver.addActionListener(e -> {
+            if (relojJuego != null) relojJuego.stop();
+            cl.show(cont, "PANTALLA_CUADRICULA");
+        });
+
+        panelNorte.add(btnVolver, BorderLayout.WEST);
+        this.add(panelNorte, BorderLayout.NORTH);
+
+        // Temporizador de 1 segundo
         relojJuego = new Timer(1000, e -> {
             if (tiempoRestante > 0) {
                 tiempoRestante--;
             } else {
                 juegoTerminado = true;
-                relojJuego.stop(); // Detenemos el reloj si se acaba el tiempo
+                relojJuego.stop();
+
+                JOptionPane.showMessageDialog(this,
+                        "¡Se acabó el tiempo! No has conseguido recolectar todas las frutas.",
+                        "Fin de la partida", JOptionPane.WARNING_MESSAGE);
+
+                cl.show(cont, "PANTALLA_CUADRICULA");
             }
-            repaint(); // Redibuja la pantalla para actualizar el tiempo
+            repaint();
         });
         relojJuego.start();
     }
 
-    /**
-     * Cuenta cuántas celdas tienen el valor '0' (fruta) al iniciar el juego.
-     */
     private void contarFrutasIniciales() {
         for (int f = 0; f < FILAS; f++) {
             for (int c = 0; c < COLUMNAS; c++) {
@@ -80,92 +98,110 @@ public class Packman extends JPanel implements ActionListener, KeyListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        // Dibujamos el Laberinto
+        // Escalado dinámico automático
+        int altoBarraSuperior = 40;
+        int tamanoCeldaX = getWidth() / COLUMNAS;
+        int tamanoCeldaY = (getHeight() - altoBarraSuperior - 50) / FILAS;
+
+        int tamanoCelda = Math.max(20, Math.min(tamanoCeldaX, tamanoCeldaY));
+
+        int desplazarX = (getWidth() - (COLUMNAS * tamanoCelda)) / 2;
+        int desplazarY = altoBarraSuperior + ((getHeight() - altoBarraSuperior - 50 - (FILAS * tamanoCelda)) / 2);
+
+        // Dibujar laberinto
         for (int f = 0; f < FILAS; f++) {
             for (int c = 0; c < COLUMNAS; c++) {
-                int x = c * TAMANO_CELDA;
-                int y = f * TAMANO_CELDA;
+                int x = desplazarX + (c * tamanoCelda);
+                int y = desplazarY + (f * tamanoCelda);
 
                 if (laberinto[f][c] == 1) {
-                    g.setColor(Color.BLUE); // Paredes azules
-                    g.fillRect(x, y, TAMANO_CELDA, TAMANO_CELDA);
+                    g.setColor(new Color(25, 25, 166));
+                    g.fillRect(x, y, tamanoCelda, tamanoCelda);
+                    g.setColor(Color.BLACK);
+                    g.drawRect(x, y, tamanoCelda, tamanoCelda);
                 } else if (laberinto[f][c] == 0) {
-                    g.setColor(Color.RED); // Frutas rojas
-                    g.fillOval(x + 15, y + 15, 10, 10);
+                    g.setColor(Color.RED);
+                    int radioFruta = tamanoCelda / 4;
+                    g.fillOval(x + (tamanoCelda/2) - (radioFruta/2), y + (tamanoCelda/2) - (radioFruta/2), radioFruta, radioFruta);
                 }
             }
         }
 
-        // Dibujamos al Jugador (Pac-Man)
+        // Dibujar jugador
         g.setColor(Color.YELLOW);
-        g.fillArc(colJugador * TAMANO_CELDA + 5, filaJugador * TAMANO_CELDA + 5, 30, 30, 30, 300);
+        int px = desplazarX + (colJugador * tamanoCelda) + (tamanoCelda / 8);
+        int py = desplazarY + (filaJugador * tamanoCelda) + (tamanoCelda / 8);
+        int pTamano = (tamanoCelda * 3) / 4;
+        g.fillArc(px, py, pTamano, pTamano, 30, 300);
 
-        // Dibujamos la Interfaz (Puntos, Frutas y Tiempo)
+        // Barra informativa inferior
+        int panelInfoY = getHeight() - 25;
         g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 15));
-        g.drawString("Puntos: " + puntos, 20, FILAS * TAMANO_CELDA + 30);
-        g.drawString("Frutas: " + frutasRestantes, 150, FILAS * TAMANO_CELDA + 30);
-        g.drawString("Tiempo: " + tiempoRestante + "s", 300, FILAS * TAMANO_CELDA + 30);
+        g.setFont(new Font("Arial", Font.BOLD, 16));
+        g.drawString("Puntos: " + puntos, desplazarX + 20, panelInfoY);
+        g.drawString("Frutas: " + frutasRestantes, desplazarX + (COLUMNAS * tamanoCelda) / 3 + 10, panelInfoY);
+        g.drawString("Tiempo: " + tiempoRestante + "s", desplazarX + (2 * (COLUMNAS * tamanoCelda)) / 3 + 10, panelInfoY);
 
-        // MODIFICADO: Mensaje de fin de juego dinámico (Victoria o Derrota)
         if (juegoTerminado) {
-            g.setFont(new Font("Arial", Font.BOLD, 40));
+            g.setFont(new Font("Arial", Font.BOLD, tamanoCelda));
             if (victoria) {
                 g.setColor(Color.GREEN);
-                g.drawString("¡VICTORIA!", 180, (FILAS * TAMANO_CELDA) / 2);
+                g.drawString("¡VICTORIA!", getWidth()/2 - 100, getHeight()/2);
             } else {
                 g.setColor(Color.RED);
-                g.drawString("¡FIN DEL JUEGO!", 120, (FILAS * TAMANO_CELDA) / 2);
+                g.drawString("¡FIN DEL JUEGO!", getWidth()/2 - 130, getHeight()/2);
             }
         }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (juegoTerminado) return; // Si terminó el juego, no se mueve
+        if (juegoTerminado) return;
 
         int nuevaFila = filaJugador;
         int nuevaCol = colJugador;
 
-        // Detectamos la tecla presionada
         if (e.getKeyCode() == KeyEvent.VK_UP)    nuevaFila--;
         if (e.getKeyCode() == KeyEvent.VK_DOWN)  nuevaFila++;
         if (e.getKeyCode() == KeyEvent.VK_LEFT)  nuevaCol--;
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) nuevaCol++;
 
-        // Verificamos si no hay pared (1) en la nueva posición
         if (laberinto[nuevaFila][nuevaCol] != 1) {
             filaJugador = nuevaFila;
             colJugador = nuevaCol;
 
-            // Si hay fruta (0), la "comemos" y sumamos puntos
             if (laberinto[filaJugador][colJugador] == 0) {
-                laberinto[filaJugador][colJugador] = 2; // Marcamos como vacío
+                laberinto[filaJugador][colJugador] = 2;
                 puntos += 10;
-                frutasRestantes--; // Restamos una fruta del contador
+                frutasRestantes--;
 
-                // NUEVA LÓGICA: Comprobamos si ya no quedan frutas en el mapa
                 if (frutasRestantes == 0) {
                     juegoTerminado = true;
                     victoria = true;
-                    relojJuego.stop(); // Paramos el temporizador de inmediato
+                    relojJuego.stop();
 
-                    // Otorgamos la recompensa personalizada (ej: 100 monedas)
                     int recompensaMonedas = 100;
-                    mascotaActual.ganarMonedas(recompensaMonedas);
 
-                    JOptionPane.showMessageDialog(this,
-                            "¡Felicidades! Has recolectado todas las frutas.\n¡Tu mascota ha ganado " + recompensaMonedas + " monedas! 🪙",
-                            "¡Victoria!", JOptionPane.INFORMATION_MESSAGE);
+                    // PROTECCIÓN: Si la mascota es null, evitamos que reviente la app
+                    if (mascotaActual != null) {
+                        mascotaActual.ganarMonedas(recompensaMonedas);
+                        JOptionPane.showMessageDialog(this,
+                                "¡Felicidades! Has recolectado todas las frutas.\n¡Tu mascota ha ganado " + recompensaMonedas + " monedas! 🪙",
+                                "¡Victoria!", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(this,
+                                "¡Felicidades! Has ganado la partida.\n(Nota: Las monedas no se sumaron porque no se detectó una mascota activa).",
+                                "¡Victoria sin Mascota!", JOptionPane.WARNING_MESSAGE);
+                    }
+
+                    // Volvemos al menú pase lo que pase sin bloquearse
+                    cl.show(cont, "PANTALLA_CUADRICULA");
                 }
             }
         }
-        repaint(); // Actualiza la posición visual
+        repaint();
     }
 
     public void keyReleased(KeyEvent e) {}
     public void keyTyped(KeyEvent e) {}
-    public void actionPerformed(ActionEvent e) {}
-
-    // Eliminamos o ignoramos el main original para integrarlo mediante el constructor con mascota
 }
