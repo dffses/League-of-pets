@@ -6,6 +6,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Random;
+// Importamos la clase Animal (asegúrate de que esté en el paquete correcto)
+import animales.Animal;
 
 public class TorrePastel extends JPanel {
 
@@ -43,6 +45,9 @@ public class TorrePastel extends JPanel {
     private int pisos = 0;
     private boolean juegoTerminado = false;
 
+    // NUEVA VARIABLE: Instancia de tu mascota activa
+    private Animal mascotaActual;
+
     private Color[] paletaColores = {
             new Color(255, 105, 180), new Color(255, 165, 0),
             new Color(255, 215, 0), new Color(50, 205, 50),
@@ -53,20 +58,31 @@ public class TorrePastel extends JPanel {
 
     /**
      * Constructor del panel. Configura los listeners del ratón y arranca la animación basculante.
+     * MODIFICADO: El constructor ahora también recibe a la mascota.
      */
-    public TorrePastel(CardLayout cl, JPanel cont) {
+    public TorrePastel(CardLayout cl, JPanel cont, Animal mascota) {
+        this.mascotaActual = mascota;
+
         this.setLayout(new BorderLayout());
         this.setBackground(new Color(224, 255, 255));
         this.setFocusable(true);
 
         colorActual = obtenerColorAleatorio();
 
-        // Ajustamos la posición inicial de vuelopara que empiece sincronizada con la nueva base.
+        // Ajustamos la posición inicial de vuelo para que empiece sincronizada con la nueva base.
         bloqueX = baseX;
 
+        // MODIFICADO: El botón de salir ahora también asegura dar las monedas acumuladas
         JButton btnSalir = new JButton("⬅ Salir");
         btnSalir.addActionListener(e -> {
             if (timer != null) timer.stop();
+
+            // Si sale a mitad de partida con pisos colocados, le damos sus monedas
+            if (pisos > 0 && !juegoTerminado) {
+                int monedasGanadas = pisos * 5;
+                mascotaActual.ganarMonedas(monedasGanadas);
+                JOptionPane.showMessageDialog(this, "Dejaste la tarta a medias. ¡Tu mascota ganó " + monedasGanadas + " monedas! 🪙");
+            }
             cl.show(cont, "PANTALLA_CUADRICULA");
         });
         JPanel panelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -93,11 +109,25 @@ public class TorrePastel extends JPanel {
 
                 int desajuste = bloqueX - baseX;
 
-                // Si el desajuste supera el tamaño de la base de soporte, la torre colapsa de inmediato
+                // MODIFICADO: Bloque de control cuando la torre colapsa (Game Over)
                 if (Math.abs(desajuste) >= baseAncho) {
                     juegoTerminado = true;
                     timer.stop();
-                    JOptionPane.showMessageDialog(TorrePastel.this, "¡La tarta se derrumbó!\nPisos totales: " + pisos, "Fin del juego", JOptionPane.ERROR_MESSAGE);
+
+                    // Calculamos: 5 monedas por cada piso colocado con éxito
+                    int monedasGanadas = pisos * 5;
+
+                    if (monedasGanadas > 0) {
+                        mascotaActual.ganarMonedas(monedasGanadas);
+                        JOptionPane.showMessageDialog(TorrePastel.this,
+                                "¡La tarta se derrumbó!\nPisos totales: " + pisos + "\n¡Has ganado " + monedasGanadas + " monedas! 🪙",
+                                "Fin del juego", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(TorrePastel.this,
+                                "¡La tarta se derrumbó sin colocar ningún piso!\nNo has ganado monedas esta vez.",
+                                "Fin del juego", JOptionPane.WARNING_MESSAGE);
+                    }
+
                     cl.show(cont, "PANTALLA_CUADRICULA");
                     return;
                 }
@@ -140,9 +170,6 @@ public class TorrePastel extends JPanel {
         return paletaColores[random.nextInt(paletaColores.length)];
     }
 
-    /**
-     * Redibuja la mesa de apoyo, el plato base centrado y todas las rebanadas apiladas en tiempo real.
-     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

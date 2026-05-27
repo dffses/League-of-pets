@@ -3,6 +3,8 @@ package juegos;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+// Importamos la clase Animal (asegúrate de que esté en la ruta correcta)
+import animales.Animal;
 
 public class Sudoku extends JPanel {
     private int[][] tablero;
@@ -13,10 +15,18 @@ public class Sudoku extends JPanel {
     private final int MAX_FALLOS = 3;
     private JLabel lblFallos;
     private JTextField[][] casillas = new JTextField[9][9];
+
+    // NUEVA VARIABLE: Guardamos la referencia de tu mascota
+    private Animal mascotaActual;
+
     /**
      * Construye el entorno de celdas dividiéndolo en sub-bloques de 3x3 para respetar las reglas visuales.
+     * MODIFICADO: El constructor ahora también recibe a la mascota.
      */
-    public Sudoku(CardLayout cl, JPanel cont) {
+    public Sudoku(CardLayout cl, JPanel cont, Animal mascota) {
+        // Asignamos la mascota
+        this.mascotaActual = mascota;
+
         this.setLayout(new BorderLayout());
         this.setBackground(Color.WHITE);
 
@@ -87,6 +97,7 @@ public class Sudoku extends JPanel {
         }
         this.add(panelPrincipalTablero, BorderLayout.CENTER);
     }
+
     /**
      * Valida el número ingresado comparándolo directamente con la matriz solución.
      */
@@ -104,8 +115,15 @@ public class Sudoku extends JPanel {
                 casillas[f][c].setEditable(false); // Ya no se puede modificar
                 tablero[f][c] = valorIntroducido;
 
+                // MODIFICADO: Bloque de control al completar victoriosamente el tablero
                 if (completo()) {
-                    JOptionPane.showMessageDialog(this, "¡Felicidades! Has completado el Sudoku.", "¡Ganaste!", JOptionPane.INFORMATION_MESSAGE);
+                    int recompensaSudoku = 200; // Monedas por resolver el Sudoku entero
+                    mascotaActual.ganarMonedas(recompensaSudoku);
+
+                    JOptionPane.showMessageDialog(this,
+                            "¡Felicidades! Has completado el Sudoku.\n¡Has ganado " + recompensaSudoku + " monedas para tu mascota! 🪙",
+                            "¡Ganaste!", JOptionPane.INFORMATION_MESSAGE);
+
                     cl.show(cont, "PANTALLA_CUADRICULA");
                 }
             } else {
@@ -119,6 +137,7 @@ public class Sudoku extends JPanel {
             registrarFallo(cl, cont);
         }
     }
+
     /**
      * Lleva el control de fallos acumulados.
      */
@@ -131,7 +150,7 @@ public class Sudoku extends JPanel {
         }
     }
 
-    //Métodos que mantengo del sudoku consola
+    // Métodos lógicos del Sudoku se quedan exactamente igual...
     private int[][] copiar(int[][] t) {
         int[][] copia = new int[9][9];
         for (int i = 0; i < 9; i++) copia[i] = t[i].clone();
@@ -154,9 +173,7 @@ public class Sudoku extends JPanel {
         }
         return false;
     }
-    /**
-     * Comprueba las tres reglas básicas del Sudoku: que no se repita en fila, columna ni cuadrante 3x3.
-     */
+
     private boolean esValido(int fila, int col, int num) {
         for (int i = 0; i < 9; i++) {
             if (tablero[fila][i] == num || tablero[i][col] == num) return false;
