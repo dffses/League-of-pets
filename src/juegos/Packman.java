@@ -221,10 +221,12 @@ public class Packman extends JPanel implements KeyListener {
     public void keyTyped(KeyEvent e) {}
 
     private void actualizarInterfazPrincipal() {
-        // Buscar la interfaz principal en el contenedor y actualizar monedas
+        // Buscamos dinámicamente el panel Interfaz recorriendo el contenedor
         for (Component comp : cont.getComponents()) {
             if (comp instanceof Interfaz) {
-                ((Interfaz) comp).actualizarMonedasVisuales();
+                Interfaz interfaz = (Interfaz) comp;
+                interfaz.actualizarMonedasVisuales();       // Actualiza el contador de monedas 🪙
+                interfaz.actualizarEstadisticasVisuales(); // 🛠️ ¡NUEVO! Fuerza el refresco inmediato de Hambre, Felicidad, Energía y Exp
                 break;
             }
         }
