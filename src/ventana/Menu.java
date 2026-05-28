@@ -2,8 +2,9 @@ package ventana;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import animales.Animal;
-import animales.Especie;
 
 public class Menu extends JFrame {
     private JPanel contenedor;
@@ -26,12 +27,51 @@ public class Menu extends JFrame {
         this.add(contenedor);
         setLocationRelativeTo(null);
         setVisible(true);
+
+        // ✅ CORRECCIÓN: Guardar partida automáticamente al cerrar la ventana
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                guardarPartidaActual();
+            }
+        });
+    }
+
+    /**
+     * ✅ NUEVO MÉTODO: Busca la mascota actual en el contenedor y guarda su estado
+     */
+    private void guardarPartidaActual() {
+        // Recorremos todos los componentes del contenedor principal
+        for (Component comp : contenedor.getComponents()) {
+            // Buscamos la pantalla principal de la interfaz
+            if (comp instanceof Interfaz) {
+                Interfaz interfaz = (Interfaz) comp;
+                Animal mascota = interfaz.getMascota();
+                if (mascota != null) {
+                    mascota.guardarPartidaCompleta();
+                    System.out.println("✅ Partida guardada automáticamente al cerrar el juego para: " + mascota.getNombre());
+                } else {
+                    System.out.println("⚠️ No se encontró mascota activa al cerrar el juego.");
+                }
+                return;
+            }
+        }
+        System.out.println("ℹ️ No se encontró una partida activa para guardar.");
     }
 
     private JPanel crearMenuInicio() {
         JPanel panel = new JPanel(new GridBagLayout());
-        JButton boton = new JButton("LEAGUE_OF_PETS");
-        boton.setFont(new Font("Arial", Font.BOLD, 16));
+        panel.setBackground(new Color(50, 50, 80)); // Color de fondo elegante
+
+        JButton boton = new JButton("LEAGUE OF PETS");
+        boton.setFont(new Font("Arial", Font.BOLD, 24));
+        boton.setForeground(Color.WHITE);
+        boton.setBackground(new Color(100, 150, 200));
+        boton.setFocusPainted(false);
+        boton.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.WHITE, 2),
+                BorderFactory.createEmptyBorder(15, 30, 15, 30)
+        ));
 
         // Al pulsar el botón de inicio, se decide el flujo según el XML
         boton.addActionListener(e -> {
@@ -52,11 +92,13 @@ public class Menu extends JFrame {
 
         if (mascotaActiva != null) {
             // ¡Hay partida guardada! Identificamos su foto por su especie
-            String rutaImagen = "bran_perro.png"; // Ruta por defecto
-            if (mascotaActiva.getEspecie() == Especie.GATO) {
+            String rutaImagen;
+            if (mascotaActiva.getEspecie() == animales.Especie.GATO) {
                 rutaImagen = "shasha_gato.png";
-            } else if (mascotaActiva.getEspecie() == Especie.COCODRILO) {
+            } else if (mascotaActiva.getEspecie() == animales.Especie.COCODRILO) {
                 rutaImagen = "cocodrilo.png";
+            } else {
+                rutaImagen = "bran_perro.png"; // Perro por defecto
             }
 
             // Instanciamos la interfaz pasándole la mascota recuperada del XML
@@ -65,7 +107,7 @@ public class Menu extends JFrame {
 
             // Saltamos directamente a la acción sin pasar por la selección de mascota
             cards.show(contenedor, "INTERFAZ_PRINCIPAL");
-            System.out.println("¡Partida cargada de forma automática con éxito!");
+            System.out.println("✅ ¡Partida cargada de forma automática con éxito! Mascota: " + mascotaActiva.getNombre());
         } else {
             // No hay archivo XML guardado: cargamos el panel de selección de mascota desde cero
             SeleccionMascota pantallaMascota = new SeleccionMascota(cards, contenedor, this);
@@ -73,7 +115,7 @@ public class Menu extends JFrame {
 
             // Mostramos la pantalla de selección para comprar una mascota nueva
             cards.show(contenedor, "PANTALLA_SELECCION_MASCOTA");
-            System.out.println("No se encontró partida guardada. Redirigiendo al selector de mascotas.");
+            System.out.println("ℹ️ No se encontró partida guardada. Redirigiendo al selector de mascotas.");
         }
 
         // Refrescamos el contenedor para evitar fallos visuales

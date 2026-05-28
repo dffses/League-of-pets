@@ -53,9 +53,9 @@ public class SeleccionMascota extends JPanel {
         JButton btnCocodrilo = crearBotonTransparente("Steve", "cocodrilo.png");
 
         // Acciones al hacer clic asociando cada mascota a su Especie correspondiente
-        btnPerro.addActionListener(e -> avanzarAInterfaz("Bran", Especie.PERRO, "bran_perro.png", cardLayout, contenedorPrincipal));
-        btnGato.addActionListener(e -> avanzarAInterfaz("Shasha", Especie.GATO, "shasha_gato.png", cardLayout, contenedorPrincipal));
-        btnCocodrilo.addActionListener(e -> avanzarAInterfaz("Steve", Especie.COCODRILO, "cocodrilo.png", cardLayout, contenedorPrincipal));
+        btnPerro.addActionListener(e -> avanzarAInterfaz("Bran", Especie.PERRO, "imagenes.bran_perro.png", cardLayout, contenedorPrincipal));
+        btnGato.addActionListener(e -> avanzarAInterfaz("Shasha", Especie.GATO, "imagenes.shasha_gato.png", cardLayout, contenedorPrincipal));
+        btnCocodrilo.addActionListener(e -> avanzarAInterfaz("Steve", Especie.COCODRILO, "imagenes.cocodrilo.png", cardLayout, contenedorPrincipal));
 
         panelMascotas.add(btnPerro);
         panelMascotas.add(btnGato);
@@ -107,13 +107,14 @@ public class SeleccionMascota extends JPanel {
      * permitiendo instanciar el objeto Animal con todos sus requisitos del constructor.
      */
     private void avanzarAInterfaz(String nombre, Especie especie, String ruta, CardLayout cl, JPanel cont) {
-        // Creamos la mascota usando los tres parámetros obligatorios: nombre, especie y un género por defecto
-        // (Modifica Especie.PERRO, Especie.GATO, etc., si en tu Enum se llaman de otra forma)
+        // Crear mascota nueva
         Animal mascotaNueva = new Animal(nombre, especie, Genero.Macho);
 
-        // Enviamos el objeto con sus datos inicializados (y monedas cargadas del XML) a la interfaz
-        Interfaz miInterfaz = new Interfaz(cl, cont, mascotaNueva, ruta);
+        // ✅ CRUCIAL: Guardar la partida inmediatamente al crear la mascota
+        mascotaNueva.guardarPartidaCompleta();
 
+        // Enviar el objeto a la interfaz
+        Interfaz miInterfaz = new Interfaz(cl, cont, mascotaNueva, ruta);
         cont.add(miInterfaz, "INTERFAZ_PRINCIPAL");
         cl.show(cont, "INTERFAZ_PRINCIPAL");
         cont.revalidate();

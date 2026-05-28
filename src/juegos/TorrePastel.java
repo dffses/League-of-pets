@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Random;
 // Importamos la clase Animal (asegúrate de que esté en el paquete correcto)
 import animales.Animal;
+import ventana.Interfaz;
 
 public class TorrePastel extends JPanel {
 
@@ -119,6 +120,7 @@ public class TorrePastel extends JPanel {
 
                     if (monedasGanadas > 0) {
                         mascotaActual.ganarMonedas(monedasGanadas);
+                        actualizarInterfazPrincipal();
                         JOptionPane.showMessageDialog(TorrePastel.this,
                                 "¡La tarta se derrumbó!\nPisos totales: " + pisos + "\n¡Has ganado " + monedasGanadas + " monedas! 🪙",
                                 "Fin del juego", JOptionPane.INFORMATION_MESSAGE);
@@ -203,5 +205,21 @@ public class TorrePastel extends JPanel {
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", Font.BOLD, 18));
         g.drawString("Capas de tarta: " + pisos, 20, 70);
+    }
+
+    private void actualizarInterfazPrincipal() {
+        Component parent = this.getParent();
+        while (parent != null) {
+            if (parent instanceof JPanel) {
+                JPanel panel = (JPanel) parent;
+                for (Component comp : panel.getComponents()) {
+                    if (comp instanceof Interfaz) {
+                        ((Interfaz) comp).actualizarMonedasVisuales();
+                        return;
+                    }
+                }
+            }
+            parent = parent.getParent();
+        }
     }
 }

@@ -3,6 +3,7 @@ package animales;
 import java.io.File;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -58,6 +59,7 @@ public class Animal {
     public void ganarMonedas(int cantidad) {
         this.monedas += cantidad;
         System.out.println("¡Has ganado " + cantidad + " monedas! Saldo actual: " + this.monedas);
+        guardarPartidaCompleta();
         guardarMonedasEnXML(); // Guarda los cambios inmediatamente
     }
 
@@ -304,5 +306,55 @@ public class Animal {
             System.out.println("Error al cargar la partida (se ignorará el archivo): " + e.getMessage());
             return null;
         }
+    }
+
+
+    /**
+     * Guarda TODOS los datos de la mascota en un XML completo.
+     * Este método reemplaza a guardarMonedasEnXML() para guardar todo el estado.
+     */
+    public void guardarPartidaCompleta() {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.newDocument();
+
+            // Etiqueta raíz
+            Element rootElement = doc.createElement("partida");
+            doc.appendChild(rootElement);
+
+            // Guardar todos los atributos
+            guardarEtiqueta(doc, rootElement, "nombre", this.nombre);
+            guardarEtiqueta(doc, rootElement, "especie", this.especie.name());
+            guardarEtiqueta(doc, rootElement, "genero", this.genero.name());
+            guardarEtiqueta(doc, rootElement, "hambre", String.valueOf(this.hambre));
+            guardarEtiqueta(doc, rootElement, "felicidad", String.valueOf(this.felicidad));
+            guardarEtiqueta(doc, rootElement, "limpieza", String.valueOf(this.limpieza));
+            guardarEtiqueta(doc, rootElement, "energia", String.valueOf(this.energia));
+            guardarEtiqueta(doc, rootElement, "nivel", String.valueOf(this.nivel));
+            guardarEtiqueta(doc, rootElement, "experiencia", String.valueOf(this.experiencia));
+            guardarEtiqueta(doc, rootElement, "monedas", String.valueOf(this.monedas));
+
+            // Guardar archivo
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(new File("partida.xml"));
+            transformer.transform(source, result);
+
+            System.out.println("Partida guardada correctamente para: " + nombre);
+
+        } catch (Exception e) {
+            System.out.println("Error al guardar la partida: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // Método auxiliar para crear etiquetas
+    private void guardarEtiqueta(Document doc, Element root, String nombre, String valor) {
+        Element etiqueta = doc.createElement(nombre);
+        etiqueta.appendChild(doc.createTextNode(valor));
+        root.appendChild(etiqueta);
     }
 }

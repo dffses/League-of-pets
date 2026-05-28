@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Random;
 // Importamos la clase Animal (cambia la ruta del paquete si es necesario)
 import animales.Animal;
+import ventana.Interfaz;
 
 public class Saltitos extends JPanel implements ActionListener, KeyListener {
 
@@ -138,6 +139,7 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
             // 3. Entregamos la recompensa si ha sobrevivido lo suficiente
             if (monedasGanadas > 0) {
                 mascotaActual.ganarMonedas(monedasGanadas);
+                actualizarInterfazPrincipal();
                 JOptionPane.showMessageDialog(this,
                         "¡Game Over!\nHas aguantado " + segundosJugados + " segundos.\nGanaste: " + monedasGanadas + " monedas 🪙");
             } else {
@@ -175,6 +177,22 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
 
         if (tecla == KeyEvent.VK_LEFT || tecla == KeyEvent.VK_RIGHT) {
             velocidadX = 0;
+        }
+    }
+
+    private void actualizarInterfazPrincipal() {
+        Component parent = this.getParent();
+        while (parent != null) {
+            if (parent instanceof JPanel) {
+                JPanel panel = (JPanel) parent;
+                for (Component comp : panel.getComponents()) {
+                    if (comp instanceof Interfaz) {
+                        ((Interfaz) comp).actualizarMonedasVisuales();
+                        return;
+                    }
+                }
+            }
+            parent = parent.getParent();
         }
     }
 }
