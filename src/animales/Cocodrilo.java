@@ -19,5 +19,11 @@ public class Cocodrilo extends Animal {
         this.monedas = monedas;
     }
 
-
+    @Override
+    public void bañar() {
+        this.limpieza = 100;
+        this.felicidad += 15;
+        ganarExperiencia(15);
+        limitarValores();
+    }
 }
