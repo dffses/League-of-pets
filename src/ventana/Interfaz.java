@@ -5,6 +5,7 @@ import java.awt.*;
 import java.net.URL;
 import animales.Animal;
 
+
 public class Interfaz extends JPanel {
     private Image imagenFondo;
     private Animal mascotaActual;
@@ -18,12 +19,14 @@ public class Interfaz extends JPanel {
     private JProgressBar barraEnergia;
     private JProgressBar barraExp;
 
-    public Interfaz(CardLayout cardLayout, JPanel contenedorPrincipal, Animal mascota, String rutaImagenMascota) {
+    private Menu menuRaiz;
+
+    public Interfaz(CardLayout cardLayout, JPanel contenedorPrincipal, Animal mascota, String rutaImagenMascota, Menu menuRaiz) {
         this.cardLayout = cardLayout;
         this.contenedorPrincipal = contenedorPrincipal;
         this.mascotaActual = mascota;
+        this.menuRaiz = menuRaiz; // 🛠️ Lo guardamos
         this.setLayout(new BorderLayout());
-
         URL urlFondo = getClass().getResource("fondo_tienda.jpg");
         if (urlFondo != null) {
             imagenFondo = new ImageIcon(urlFondo).getImage();
