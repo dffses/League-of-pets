@@ -8,11 +8,11 @@ public class Cocodrilo extends Animal {
     }
 
     // Constructor para cargar del XML
-    public Cocodrilo(String nombre, Especie especie, Genero genero, int hambre, int felicidad, int limpieza, int energia, int nivel, int experiencia, int monedas) {
+    public Cocodrilo(String nombre, Especie especie, Genero genero, int hambre, int felicidad, int energia, int nivel, int experiencia, int monedas) {
         super(nombre, especie, genero);
         this.hambre = hambre;
         this.felicidad = felicidad;
-        this.limpieza = limpieza;
+
         this.energia = energia;
         this.nivel = nivel;
         this.experiencia = experiencia;
@@ -20,10 +20,26 @@ public class Cocodrilo extends Animal {
     }
 
     @Override
-    public void bañar() {
-        this.limpieza = 100;
-        this.felicidad += 15;
-        ganarExperiencia(15);
-        limitarValores();
+    public void comer() {
+        this.energia+=20;
+        this.hambre +=20;
+        this.felicidad+=5;
+        super.comer();
+    }
+
+    @Override
+    public void pasear() {
+        this.energia-=20;
+        this.hambre -=10;
+        this.felicidad+=15;
+        super.pasear();
+    }
+
+    @Override
+    public void jugar() {
+        this.energia-=25;
+        this.hambre -=10;
+        this.felicidad+=15;
+        super.jugar();
     }
 }
