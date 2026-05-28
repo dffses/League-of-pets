@@ -9,9 +9,12 @@ public class Interfaz extends JPanel {
     private Image imagenFondo;
     private Animal mascotaActual;
     private JLabel labelMonedas;
+    private CardLayout cardLayout;
+    private JPanel contenedorPrincipal;
 
     public Interfaz(CardLayout cardLayout, JPanel contenedorPrincipal, Animal mascota, String rutaImagenMascota) {
-        // SEGURIDAD AUTOMÁTICA: Si nos pasan un objeto null por error, evitamos que la app explote
+        this.cardLayout = cardLayout;
+        this.contenedorPrincipal = contenedorPrincipal;
         this.mascotaActual = mascota;
         this.setLayout(new BorderLayout());
 
@@ -58,7 +61,8 @@ public class Interfaz extends JPanel {
         });
 
         btnDerecha.addActionListener(e -> {
-            SeleccionJuegos pantallaJuegos = new SeleccionJuegos(cardLayout, contenedorPrincipal);
+            // ✅ PASAMOS LA MASCOTA CORRECTAMENTE
+            SeleccionJuegos pantallaJuegos = new SeleccionJuegos(cardLayout, contenedorPrincipal, mascotaActual);
             contenedorPrincipal.add(pantallaJuegos, "PANTALLA_CUADRICULA");
             cardLayout.show(contenedorPrincipal, "PANTALLA_CUADRICULA");
             contenedorPrincipal.revalidate();
@@ -69,7 +73,6 @@ public class Interfaz extends JPanel {
         panelBotones.add(btnDerecha);
         panelCabecera.add(panelBotones, BorderLayout.CENTER);
 
-        // CONTROL DE SEGURIDAD: Comprobamos si la mascota es null antes de leer sus monedas
         int monedasMostradas = (mascotaActual != null) ? mascotaActual.getMonedas() : 0;
 
         labelMonedas = new JLabel(monedasMostradas + " 🪙", SwingConstants.CENTER);
@@ -95,7 +98,6 @@ public class Interfaz extends JPanel {
         gbc.gridy = 0;
         gbc.insets = new Insets(180, 10, 5, 10);
 
-        // CONTROL DE SEGURIDAD: Evitamos el fallo también al recuperar el nombre
         String nombreMostrado = (mascotaActual != null) ? mascotaActual.getNombre() : "Mascota";
 
         JLabel labelNombre = new JLabel(nombreMostrado, SwingConstants.CENTER);
@@ -122,9 +124,26 @@ public class Interfaz extends JPanel {
         this.add(panelCentral, BorderLayout.CENTER);
     }
 
+    // ✅ GETTER para que Menu pueda guardar la partida
+    public Animal getMascota() {
+        return this.mascotaActual;
+    }
+
+    // ✅ MÉTODO para actualizar las monedas desde cualquier juego
     public void actualizarMonedasVisuales() {
         if (labelMonedas != null && mascotaActual != null) {
             labelMonedas.setText(mascotaActual.getMonedas() + " 🪙");
+            System.out.println("💰 Monedas actualizadas en Interfaz: " + mascotaActual.getMonedas());
+        }
+    }
+
+    // ✅ MÉTODO para que los juegos puedan agregar monedas y actualizar la vista
+    public void ganarMonedasYActualizar(int cantidad) {
+        if (mascotaActual != null) {
+            mascotaActual.ganarMonedas(cantidad);
+            actualizarMonedasVisuales();
+            // Guardar automáticamente después de ganar monedas
+            mascotaActual.guardarPartidaCompleta();
         }
     }
 
@@ -135,6 +154,4 @@ public class Interfaz extends JPanel {
             g.drawImage(imagenFondo, 0, 0, getWidth(), getHeight(), this);
         }
     }
-
-
 }

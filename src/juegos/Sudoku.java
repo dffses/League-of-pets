@@ -5,6 +5,7 @@ import javax.swing.border.Border;
 import java.awt.*;
 // Importamos la clase Animal (asegúrate de que esté en la ruta correcta)
 import animales.Animal;
+import ventana.Interfaz;
 
 public class Sudoku extends JPanel {
     private int[][] tablero;
@@ -119,6 +120,7 @@ public class Sudoku extends JPanel {
                 if (completo()) {
                     int recompensaSudoku = 200; // Monedas por resolver el Sudoku entero
                     mascotaActual.ganarMonedas(recompensaSudoku);
+                    actualizarInterfazPrincipal();
 
                     JOptionPane.showMessageDialog(this,
                             "¡Felicidades! Has completado el Sudoku.\n¡Has ganado " + recompensaSudoku + " monedas para tu mascota! 🪙",
@@ -217,5 +219,22 @@ public class Sudoku extends JPanel {
             }
         }
         return true;
+    }
+
+
+    private void actualizarInterfazPrincipal() {
+        Component parent = this.getParent();
+        while (parent != null) {
+            if (parent instanceof JPanel) {
+                JPanel panel = (JPanel) parent;
+                for (Component comp : panel.getComponents()) {
+                    if (comp instanceof Interfaz) {
+                        ((Interfaz) comp).actualizarMonedasVisuales();
+                        return;
+                    }
+                }
+            }
+            parent = parent.getParent();
+        }
     }
 }

@@ -2,9 +2,6 @@ package ventana;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
 import animales.Animal;
 import animales.Especie;
 
@@ -32,27 +29,16 @@ public class Menu extends JFrame {
     }
 
     private JPanel crearMenuInicio() {
-        // Usamos BorderLayout para que la imagen ocupe todo el panel automáticamente
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new JPanel(new GridBagLayout());
+        JButton boton = new JButton("LEAGUE_OF_PETS");
+        boton.setFont(new Font("Arial", Font.BOLD, 16));
 
-        // Cargar la imagen de la portada
-        java.net.URL urlPortada = getClass().getResource("league.jpg");
-        ImageIcon iconoPortada = new ImageIcon(urlPortada);
-        //Redimensionar la imagen para que encaje perfectamente en el tamaño del panel
-        Image imagenEscalada = iconoPortada.getImage().getScaledInstance(750, 580, Image.SCALE_SMOOTH);
-        JLabel etiquetaPortada = new JLabel(new ImageIcon(imagenEscalada));
-
-        // la imagen es interactiva escuchando el clic del ratón
-        etiquetaPortada.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                // Al hacer clic en cualquier parte de la imagen, inicia el juego
-                inicializarFlujoJuego();
-            }
+        // Al pulsar el botón de inicio, se decide el flujo según el XML
+        boton.addActionListener(e -> {
+            inicializarFlujoJuego();
         });
 
-        // Añadimos la etiqueta al centro del panel
-        panel.add(etiquetaPortada, BorderLayout.CENTER);
+        panel.add(boton);
         return panel;
     }
 

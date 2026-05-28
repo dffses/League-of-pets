@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 // Importamos la clase Animal
 import animales.Animal;
+import ventana.Interfaz;
 
 public class Packman extends JPanel implements KeyListener {
     private final int FILAS = 10;
@@ -185,6 +186,7 @@ public class Packman extends JPanel implements KeyListener {
                     // PROTECCIÓN: Si la mascota es null, evitamos que reviente la app
                     if (mascotaActual != null) {
                         mascotaActual.ganarMonedas(recompensaMonedas);
+                        actualizarInterfazPrincipal();
                         JOptionPane.showMessageDialog(this,
                                 "¡Felicidades! Has recolectado todas las frutas.\n¡Tu mascota ha ganado " + recompensaMonedas + " monedas! 🪙",
                                 "¡Victoria!", JOptionPane.INFORMATION_MESSAGE);
@@ -204,4 +206,14 @@ public class Packman extends JPanel implements KeyListener {
 
     public void keyReleased(KeyEvent e) {}
     public void keyTyped(KeyEvent e) {}
+
+    private void actualizarInterfazPrincipal() {
+        // Buscar la interfaz principal en el contenedor y actualizar monedas
+        for (Component comp : cont.getComponents()) {
+            if (comp instanceof Interfaz) {
+                ((Interfaz) comp).actualizarMonedasVisuales();
+                break;
+            }
+        }
+    }
 }
