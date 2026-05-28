@@ -81,7 +81,7 @@ public class Menu extends JFrame {
             }
 
             // Instanciamos la interfaz pasándole la mascota recuperada del XML
-            Interfaz miInterfaz = new Interfaz(cards, contenedor, mascotaActiva, rutaImagen);
+            Interfaz miInterfaz = new Interfaz(cards, contenedor, mascotaActiva, rutaImagen,this);
             contenedor.add(miInterfaz, "INTERFAZ_PRINCIPAL");
 
             // Saltamos directamente a la acción sin pasar por la selección de mascota
@@ -107,5 +107,9 @@ public class Menu extends JFrame {
         SwingUtilities.invokeLater(() -> {
             new Menu();
         });
+    }
+
+    public JPanel getMenuInicioPanel() {
+        return crearMenuInicio();
     }
 }

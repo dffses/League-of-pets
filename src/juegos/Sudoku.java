@@ -123,7 +123,7 @@ public class Sudoku extends JPanel {
                     actualizarInterfazPrincipal();
 
                     JOptionPane.showMessageDialog(this,
-                            "¡Felicidades! Has completado el Sudoku.\n¡Has ganado " + recompensaSudoku + " monedas para tu mascota! 🪙",
+                            "¡Felicidades! Has completado el Sudoku.\n¡Has ganado " + recompensaSudoku + " monedas para tu mascota! ",
                             "¡Ganaste!", JOptionPane.INFORMATION_MESSAGE);
 
                     cl.show(cont, "PANTALLA_CUADRICULA");

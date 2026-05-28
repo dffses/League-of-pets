@@ -2,33 +2,36 @@ package ventana;
 
 import javax.swing.*;
 import java.awt.*;
-// Importamos la clase Animal (asegúrate de que el paquete sea el correcto si está en otro lado)
+import java.net.URL;
 import animales.Animal;
 
 public class TiendaComida extends JPanel {
 
-    // NUEVO ATRIBUTO: Guardamos la referencia de la mascota actual del juego
     private Animal mascotaActual;
-
-    // Label para mostrar en la tienda cuántas monedas tiene el jugador en tiempo real
     private JLabel lblMonedas;
+    private CardLayout cardLayout;
+    private JPanel contenedorPrincipal;
 
-    // MODIFICADO: El constructor ahora también recibe el objeto Animal (tu mascota)
     public TiendaComida(CardLayout cardLayout, JPanel contenedorPrincipal, Animal mascota) {
-        // Asignamos la mascota a nuestro atributo de clase
+        this.cardLayout = cardLayout;
+        this.contenedorPrincipal = contenedorPrincipal;
         this.mascotaActual = mascota;
 
-        // Usamos BorderLayout para poner el menú de arriba y los productos en el centro
         this.setLayout(new BorderLayout());
         this.setBackground(new Color(255, 255, 240));
 
-        // --- 1. PANEL SUPERIOR (Norte): Botón volver y Monedas actuales ---
+        // --- PANEL SUPERIOR (Norte): Botón volver y Monedas ---
         JPanel panelNorte = new JPanel(new BorderLayout());
         panelNorte.setOpaque(false);
+        panelNorte.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Botón volver
         JButton btnVolver = new JButton("⬅ Volver al Menú");
+        btnVolver.setFont(new Font("Arial", Font.BOLD, 14));
+        btnVolver.setBackground(new Color(200, 200, 200));
+        btnVolver.setFocusPainted(false);
         btnVolver.addActionListener(e -> {
+            // Actualizar la interfaz principal antes de volver
+            actualizarInterfazPrincipal();
             cardLayout.show(contenedorPrincipal, "INTERFAZ_PRINCIPAL");
         });
 
@@ -37,9 +40,15 @@ public class TiendaComida extends JPanel {
         panelBoton.add(btnVolver);
         panelNorte.add(panelBoton, BorderLayout.WEST);
 
-        // NUEVO: Indicador visual de monedas en la esquina superior derecha
-        lblMonedas = new JLabel("Monedas: " + mascotaActual.getMonedas() + " 🪙 ");
-        lblMonedas.setFont(new Font("Arial", Font.BOLD, 16));
+        lblMonedas = new JLabel(" " + mascotaActual.getMonedas() + " monedas");
+        lblMonedas.setFont(new Font("Arial", Font.BOLD, 18));
+        lblMonedas.setForeground(new Color(255, 140, 0));
+        lblMonedas.setBackground(new Color(255, 255, 200));
+        lblMonedas.setOpaque(true);
+        lblMonedas.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(255, 140, 0), 2),
+                BorderFactory.createEmptyBorder(8, 20, 8, 20)
+        ));
 
         JPanel panelMonedas = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         panelMonedas.setOpaque(false);
@@ -48,55 +57,168 @@ public class TiendaComida extends JPanel {
 
         this.add(panelNorte, BorderLayout.NORTH);
 
-        // --- 2. CUADRÍCULA DE PRODUCTOS (Centro) ---
-        JPanel panelProductos = new JPanel(new GridLayout(3, 4, 15, 15));
+        // --- CUADRÍCULA DE PRODUCTOS (Centro) CON IMÁGENES GRANDES ---
+        JPanel panelProductos = new JPanel(new GridLayout(2, 2, 25, 25));
         panelProductos.setOpaque(false);
+        panelProductos.setBorder(BorderFactory.createEmptyBorder(40, 50, 50, 50));
 
-        // MODIFICADO: Cambiado a nombres de fantasía de ítems y precios enteros (monedas)
-        String[] productos = {"Manzanas", "Pescado", "Pan", "Leche"};
-        Integer[] precios = {15, 35, 10, 20}; // Precios en monedas virtuales
+        // Array con: nombre, precio, descripción, ruta de imagen
+        Object[][] productos = {
+                {"Manzanas", 15, "Fruta fresca y crujiente", "Manzana.jpg"},
+                {"Pescado", 35, "Pescado fresco del día", "Pescado.jpg"},
+                {"Pan", 10, "Pan recién horneado", "Pan.jpg"},
+                {"Leche", 20, "Leche pura y cremosa", "Leche.jpg"}
+        };
 
-        String nombre;
         for (int i = 0; i < productos.length; i++) {
-            nombre = productos[i];
-            int precio = precios[i]; // Ahora es int
+            String nombre = (String) productos[i][0];
+            int precio = (int) productos[i][1];
+            String descripcion = (String) productos[i][2];
+            String rutaImagen = (String) productos[i][3];
 
-            JButton botonProducto = crearBotonProducto(nombre, precio);
-            // Cuando haces clic, llama a procesarCompra pasándole el precio
-            String finalNombre = nombre;
-            botonProducto.addActionListener(e -> procesarCompra(finalNombre, precio));
+            JButton botonProducto = crearBotonProductoPremium(nombre, precio, descripcion, rutaImagen);
+            botonProducto.addActionListener(e -> procesarCompra(nombre, precio));
             panelProductos.add(botonProducto);
         }
 
         this.add(panelProductos, BorderLayout.CENTER);
 
+        // Panel inferior con instrucciones
+        JPanel panelInferior = new JPanel(new FlowLayout());
+        panelInferior.setOpaque(false);
+        JLabel lblInstruccion = new JLabel(" Haz clic en cualquier producto para comprarlo y alimentar a tu mascota");
+        lblInstruccion.setFont(new Font("Arial", Font.ITALIC, 12));
+        lblInstruccion.setForeground(new Color(100, 100, 100));
+        panelInferior.add(lblInstruccion);
+        this.add(panelInferior, BorderLayout.SOUTH);
     }
 
-    // MODIFICADO: Recibe precio como 'int' y cambia el símbolo '€' por 'Monedas'
-    // CORREGIDO: 'String nombre' en lugar de 'String_nombre'
-    JButton crearBotonProducto(String nombre, int precio) {
-        String texto = "<html><center><b>" + nombre + "</b><br>" + precio + " Monedas</center></html>";
-        JButton btn = new JButton(texto);
-        btn.setBackground(Color.WHITE);
-        btn.setFocusPainted(false);
-        btn.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 2));
-        return btn;
+    /**
+     *  Crea un botón de producto PREMIUM con imagen grande, nombre, precio y descripción
+     */
+    private JButton crearBotonProductoPremium(String nombre, int precio, String descripcion, String rutaImagen) {
+        JButton boton = new JButton();
+        boton.setLayout(new BorderLayout());
+        boton.setBackground(Color.WHITE);
+        boton.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(200, 180, 150), 2),
+                BorderFactory.createEmptyBorder(15, 15, 15, 15)
+        ));
+        boton.setFocusPainted(false);
+        boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        // Cambiar color al pasar el ratón por encima
+        boton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                boton.setBackground(new Color(255, 250, 240));
+                boton.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(new Color(255, 140, 0), 3),
+                        BorderFactory.createEmptyBorder(15, 15, 15, 15)
+                ));
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                boton.setBackground(Color.WHITE);
+                boton.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(new Color(200, 180, 150), 2),
+                        BorderFactory.createEmptyBorder(15, 15, 15, 15)
+                ));
+            }
+        });
+
+        // Panel principal interno
+        JPanel panelInterno = new JPanel(new BorderLayout(10, 10));
+        panelInterno.setOpaque(false);
+
+        // --- PANEL SUPERIOR: Nombre del producto con emoji ---
+        JLabel labelNombre = new JLabel(nombre, SwingConstants.CENTER);
+        labelNombre.setFont(new Font("Arial", Font.BOLD, 20));
+        labelNombre.setForeground(new Color(80, 60, 40));
+        labelNombre.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        panelInterno.add(labelNombre, BorderLayout.NORTH);
+
+        // --- PANEL CENTRAL: Imagen del producto ---
+        JPanel panelImagen = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelImagen.setOpaque(false);
+
+        URL urlImagen = getClass().getResource("/imagenes/" + rutaImagen);
+        if (urlImagen != null) {
+            ImageIcon iconoOriginal = new ImageIcon(urlImagen);
+            // Escalamos la imagen a 130x130 píxeles
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(130, 130, Image.SCALE_SMOOTH);
+            JLabel labelImagen = new JLabel(new ImageIcon(imagenEscalada));
+            labelImagen.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            panelImagen.add(labelImagen);
+        } else {
+            // Placeholder si no encuentra la imagen
+            JLabel labelPlaceholder = new JLabel("", SwingConstants.CENTER);
+            labelPlaceholder.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 80));
+            panelImagen.add(labelPlaceholder);
+            System.out.println("️ No se encontró la imagen en: /imagenes/" + rutaImagen);
+        }
+        panelInterno.add(panelImagen, BorderLayout.CENTER);
+
+        // --- PANEL INFERIOR: Precio y descripción ---
+        JPanel panelInfo = new JPanel(new GridLayout(2, 1, 0, 5));
+        panelInfo.setOpaque(false);
+        panelInfo.setBorder(BorderFactory.createEmptyBorder(10, 0, 5, 0));
+
+        JLabel labelPrecio = new JLabel(" " + precio + " monedas", SwingConstants.CENTER);
+        labelPrecio.setFont(new Font("Arial", Font.BOLD, 16));
+        labelPrecio.setForeground(new Color(255, 140, 0));
+
+        JLabel labelDescripcion = new JLabel(descripcion, SwingConstants.CENTER);
+        labelDescripcion.setFont(new Font("Arial", Font.PLAIN, 11));
+        labelDescripcion.setForeground(new Color(120, 100, 80));
+
+        panelInfo.add(labelPrecio);
+        panelInfo.add(labelDescripcion);
+        panelInterno.add(panelInfo, BorderLayout.SOUTH);
+
+        boton.add(panelInterno);
+        return boton;
     }
 
-    // NUEVO MÉTODO: Conecta directamente con la lógica de tu clase Animal
-    // CORREGIDO: 'String nombre' en lugar de 'String_nombre'
+    /**
+     * Procesa la compra de un producto
+     */
     private void procesarCompra(String nombre, int precio) {
-        // Llamamos al método que creamos en tu clase Animal.
-        // Este método ya comprueba si hay dinero, resta las monedas, alimenta al animal y guarda en el XML.
+        // Llamamos al método de la mascota para comprar
         boolean compraExitosa = mascotaActual.comprarComida(precio);
 
         if (compraExitosa) {
-            // Si la mascota tenía dinero suficiente, actualizamos el texto de la pantalla de la tienda
-            lblMonedas.setText("Monedas: " + mascotaActual.getMonedas() + " 🪙 ");
-            JOptionPane.showMessageDialog(this, "¡Compraste " + nombre + "!\nTu mascota se ha alimentado.");
+            // Actualizar el contador de monedas en la tienda
+            lblMonedas.setText(" " + mascotaActual.getMonedas() + " monedas");
+
+            // Efecto visual: cambiar color del botón temporalmente
+            JOptionPane.showMessageDialog(this,
+                    " ¡Compra realizada!\n\nHas comprado " + nombre + " por " + precio + " monedas.\n\n" +
+                            " Tu mascota ha comido y está más feliz.",
+                    "Compra exitosa",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+            // Actualizar también la interfaz principal
+            actualizarInterfazPrincipal();
         } else {
-            // Si el método devolvió false es porque no alcanzaba el dinero
-            JOptionPane.showMessageDialog(this, "No tienes suficientes monedas para comprar " + nombre, "Error de saldo", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    " No tienes suficientes monedas\n\n" +
+                            "Necesitas: " + precio + " monedas\n" +
+                            "Tienes: " + mascotaActual.getMonedas() + " monedas\n\n" +
+                            "¡Juega para ganar más monedas!",
+                    "Saldo insuficiente",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Actualiza el contador de monedas en la interfaz principal
+     */
+    private void actualizarInterfazPrincipal() {
+        // Buscar la interfaz principal en el contenedor
+        for (Component comp : contenedorPrincipal.getComponents()) {
+            if (comp instanceof Interfaz) {
+                ((Interfaz) comp).actualizarMonedasVisuales();
+                break;
+            }
         }
     }
 }

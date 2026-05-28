@@ -168,13 +168,6 @@ public class Animal {
         limitarValores();
     }
 
-    public void bañar() {
-        limpieza = 100;
-        felicidad += 5;
-        ganarExperiencia(10);
-        limitarValores();
-    }
-
     public void pasear() {
         energia -= 10;
         felicidad += 10;

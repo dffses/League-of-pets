@@ -10,10 +10,13 @@ import java.net.URL;
 
 public class SeleccionMascota extends JPanel {
     private Image imagenFondo;
+    private Menu menuRaiz;
 
     public SeleccionMascota(CardLayout cardLayout, JPanel contenedorPrincipal, Menu menuRaiz) {
         // Usamos GridBagLayout en el panel principal para controlar las alturas perfectamente
         this.setLayout(new GridBagLayout());
+
+        this.menuRaiz=menuRaiz;
 
         // Cargar el fondo de la Pet Shop
         URL urlFondo = getClass().getResource("fondo_primero.jpg");
@@ -110,11 +113,11 @@ public class SeleccionMascota extends JPanel {
         // Crear mascota nueva
         Animal mascotaNueva = new Animal(nombre, especie, Genero.Macho);
 
-        // ✅ CRUCIAL: Guardar la partida inmediatamente al crear la mascota
+        //  CRUCIAL: Guardar la partida inmediatamente al crear la mascota
         mascotaNueva.guardarPartidaCompleta();
 
         // Enviar el objeto a la interfaz
-        Interfaz miInterfaz = new Interfaz(cl, cont, mascotaNueva, ruta);
+        Interfaz miInterfaz = new Interfaz(cl, cont, mascotaNueva, ruta,menuRaiz);
         cont.add(miInterfaz, "INTERFAZ_PRINCIPAL");
         cl.show(cont, "INTERFAZ_PRINCIPAL");
         cont.revalidate();

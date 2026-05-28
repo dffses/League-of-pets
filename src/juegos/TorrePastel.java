@@ -82,7 +82,7 @@ public class TorrePastel extends JPanel {
             if (pisos > 0 && !juegoTerminado) {
                 int monedasGanadas = pisos * 5;
                 mascotaActual.ganarMonedas(monedasGanadas);
-                JOptionPane.showMessageDialog(this, "Dejaste la tarta a medias. ¡Tu mascota ganó " + monedasGanadas + " monedas! 🪙");
+                JOptionPane.showMessageDialog(this, "Dejaste la tarta a medias. ¡Tu mascota ganó " + monedasGanadas + " monedas! ");
             }
             cl.show(cont, "PANTALLA_CUADRICULA");
         });
@@ -122,7 +122,7 @@ public class TorrePastel extends JPanel {
                         mascotaActual.ganarMonedas(monedasGanadas);
                         actualizarInterfazPrincipal();
                         JOptionPane.showMessageDialog(TorrePastel.this,
-                                "¡La tarta se derrumbó!\nPisos totales: " + pisos + "\n¡Has ganado " + monedasGanadas + " monedas! 🪙",
+                                "¡La tarta se derrumbó!\nPisos totales: " + pisos + "\n¡Has ganado " + monedasGanadas + " monedas! ",
                                 "Fin del juego", JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(TorrePastel.this,
