@@ -35,7 +35,7 @@ public class Menu extends JFrame {
         // Usamos BorderLayout para que la imagen ocupe todo el panel automáticamente
         JPanel panel = new JPanel(new BorderLayout());
 
-        java.net.URL urlPortada = getClass().getResource("league.jpg");
+        java.net.URL urlPortada = getClass().getResource("league_of_pets.jpg");
         ImageIcon iconoPortada = new ImageIcon(urlPortada);
 
 
