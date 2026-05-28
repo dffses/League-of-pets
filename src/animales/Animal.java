@@ -8,9 +8,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import animales.Especie;
-import animales.Genero;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -21,7 +18,6 @@ public class Animal {
     protected Genero genero;
     protected int hambre;
     protected int felicidad;
-    protected int limpieza;
     protected int energia;
     protected int nivel;
     protected int experiencia;
@@ -36,7 +32,6 @@ public class Animal {
         this.genero = genero;
         this.hambre = 50;
         this.felicidad = 50;
-        this.limpieza = 50;
         this.energia = 50;
         this.nivel = 1;
         this.experiencia = 0;
@@ -162,29 +157,17 @@ public class Animal {
     }
 
     public void comer() {
-        hambre -= 10;
-        felicidad += 5;
+
         ganarExperiencia(15);
         limitarValores();
     }
 
-    public void bañar() {
-        limpieza = 100;
-        felicidad += 5;
-        ganarExperiencia(10);
-        limitarValores();
-    }
-
     public void pasear() {
-        energia -= 10;
-        felicidad += 10;
         ganarExperiencia(25);
         limitarValores();
     }
 
     public void jugar() {
-        energia -= 10;
-        felicidad += 15;
         ganarExperiencia(30);
         limitarValores();
     }
@@ -192,14 +175,13 @@ public class Animal {
     protected void limitarValores() {
         hambre = Math.max(0, Math.min(100, hambre));
         felicidad = Math.max(0, Math.min(100, felicidad));
-        limpieza = Math.max(0, Math.min(100, limpieza));
         energia = Math.max(0, Math.min(100, energia));
     }
 
     public void actualizarEstado() {
         hambre += 2;
         energia -= 2;
-        limpieza -= 1;
+        felicidad-=1;
         limitarValores();
     }
 
@@ -218,7 +200,6 @@ public class Animal {
     public Genero getGenero() { return genero; }
     public int getHambre() { return hambre; }
     public int getFelicidad() { return felicidad; }
-    public int getLimpieza() { return limpieza; }
     public int getEnergia() { return energia; }
     public int getNivel() { return nivel; }
     public int getExperiencia() { return experiencia; }
@@ -236,7 +217,6 @@ public class Animal {
                 ", monedas=" + monedas +
                 ", hambre=" + hambre +
                 ", felicidad=" + felicidad +
-                ", limpieza=" + limpieza +
                 ", energia=" + energia +
                 ", nivel=" + nivel +
                 '}';
@@ -285,13 +265,13 @@ public class Animal {
             Animal animalCargado;
             switch (especie) {
                 case PERRO:
-                    animalCargado = new Perro(nombre, especie, genero, hambre, felicidad, limpieza, energia, nivel, experiencia, monedas);
+                    animalCargado = new Perro(nombre, especie, genero, hambre, felicidad, energia, nivel, experiencia, monedas);
                     break;
                 case GATO:
-                    animalCargado = new Gato(nombre, especie, genero, hambre, felicidad, limpieza, energia, nivel, experiencia, monedas);
+                    animalCargado = new Gato(nombre, especie, genero, hambre, felicidad, energia, nivel, experiencia, monedas);
                     break;
                 case COCODRILO:
-                    animalCargado = new Cocodrilo(nombre, especie, genero, hambre, felicidad, limpieza, energia, nivel, experiencia, monedas);
+                    animalCargado = new Cocodrilo(nombre, especie, genero, hambre, felicidad, energia, nivel, experiencia, monedas);
                     break;
                 default:
                     // Por si acaso tienes más especies en tu enum
@@ -329,7 +309,6 @@ public class Animal {
             guardarEtiqueta(doc, rootElement, "genero", this.genero.name());
             guardarEtiqueta(doc, rootElement, "hambre", String.valueOf(this.hambre));
             guardarEtiqueta(doc, rootElement, "felicidad", String.valueOf(this.felicidad));
-            guardarEtiqueta(doc, rootElement, "limpieza", String.valueOf(this.limpieza));
             guardarEtiqueta(doc, rootElement, "energia", String.valueOf(this.energia));
             guardarEtiqueta(doc, rootElement, "nivel", String.valueOf(this.nivel));
             guardarEtiqueta(doc, rootElement, "experiencia", String.valueOf(this.experiencia));
