@@ -12,7 +12,6 @@ public class Interfaz extends JPanel {
     private JLabel labelMonedas;
     private CardLayout cardLayout;
     private JPanel contenedorPrincipal;
-    // atributos para las estadísticas
     private JLabel labelNivel;
     private JProgressBar barraHambre;
     private JProgressBar barraFelicidad;
@@ -26,27 +25,22 @@ public class Interfaz extends JPanel {
         this.mascotaActual = mascota;
         this.menuRaiz = menuRaiz;
         this.setLayout(new BorderLayout());
-
-        // Cargar imagen de fondo
         cargarImagenFondo();
 
-        // --- PANEL DE CABECERA (Norte): Botones (TIENDA, JUEGOS, REINICIAR) + Monedas ---
         JPanel panelCabecera = new JPanel(new BorderLayout());
         panelCabecera.setOpaque(false);
         panelCabecera.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
-        // Ahora usamos GridLayout con 3 columnas para los tres botones
         JPanel panelBotones = new JPanel(new GridLayout(1, 3, 10, 0));
         panelBotones.setOpaque(false);
 
         JButton btnTienda = new JButton("TIENDA");
         JButton btnJuegos = new JButton("JUEGOS");
-        JButton btnReiniciar = new JButton("REINICIAR");   // <-- Botón reinicio sin emoji
+        JButton btnReiniciar = new JButton("REINICIAR");
 
-        // Estilo común para los botones
         Color btnBgTienda = new Color(255, 204, 213);
         Color btnBgJuegos = new Color(202, 228, 241);
-        Color btnBgReinicio = new Color(255, 100, 100); // Rojo para destacar
+        Color btnBgReinicio = new Color(255, 100, 100);
         Color btnFg = new Color(60, 60, 60);
         Font btnFont = new Font("Arial", Font.BOLD, 18);
 
@@ -56,8 +50,7 @@ public class Interfaz extends JPanel {
         btnTienda.setFocusPainted(false);
         btnTienda.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Color.WHITE, 2, true),
-                BorderFactory.createEmptyBorder(15, 0, 15, 0)
-        ));
+                BorderFactory.createEmptyBorder(15, 0, 15, 0)));
 
         btnJuegos.setBackground(btnBgJuegos);
         btnJuegos.setForeground(btnFg);
@@ -65,8 +58,7 @@ public class Interfaz extends JPanel {
         btnJuegos.setFocusPainted(false);
         btnJuegos.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Color.WHITE, 2, true),
-                BorderFactory.createEmptyBorder(15, 0, 15, 0)
-        ));
+                BorderFactory.createEmptyBorder(15, 0, 15, 0)));
 
         btnReiniciar.setBackground(btnBgReinicio);
         btnReiniciar.setForeground(Color.WHITE);
@@ -74,10 +66,8 @@ public class Interfaz extends JPanel {
         btnReiniciar.setFocusPainted(false);
         btnReiniciar.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Color.WHITE, 2, true),
-                BorderFactory.createEmptyBorder(15, 0, 15, 0)
-        ));
+                BorderFactory.createEmptyBorder(15, 0, 15, 0)));
 
-        // Acción de TIENDA
         btnTienda.addActionListener(e -> {
             TiendaComida pantallaTienda = new TiendaComida(cardLayout, contenedorPrincipal, mascotaActual);
             contenedorPrincipal.add(pantallaTienda, "PANTALLA_TIENDA");
@@ -86,7 +76,6 @@ public class Interfaz extends JPanel {
             contenedorPrincipal.repaint();
         });
 
-        // Acción de JUEGOS
         btnJuegos.addActionListener(e -> {
             SeleccionJuegos pantallaJuegos = new SeleccionJuegos(cardLayout, contenedorPrincipal, mascotaActual);
             contenedorPrincipal.add(pantallaJuegos, "PANTALLA_CUADRICULA");
@@ -95,7 +84,6 @@ public class Interfaz extends JPanel {
             contenedorPrincipal.repaint();
         });
 
-        // Acción de REINICIAR (borra partida y vuelve a selección de mascota)
         btnReiniciar.addActionListener(e -> reiniciarJuegoCompleto());
 
         panelBotones.add(btnTienda);
@@ -103,7 +91,6 @@ public class Interfaz extends JPanel {
         panelBotones.add(btnReiniciar);
         panelCabecera.add(panelBotones, BorderLayout.CENTER);
 
-        // Contador de monedas
         int monedasMostradas = (mascotaActual != null) ? mascotaActual.getMonedas() : 0;
         labelMonedas = new JLabel(String.valueOf(monedasMostradas), SwingConstants.CENTER);
         labelMonedas.setFont(new Font("Arial", Font.BOLD, 18));
@@ -116,18 +103,14 @@ public class Interfaz extends JPanel {
         panelMonedasFlotante.setOpaque(false);
         panelMonedasFlotante.add(labelMonedas);
         panelCabecera.add(panelMonedasFlotante, BorderLayout.EAST);
-
         this.add(panelCabecera, BorderLayout.NORTH);
 
-        // --- PANEL CENTRAL: Nombre y Avatar ---
         JPanel panelCentral = new JPanel(new GridBagLayout());
         panelCentral.setOpaque(false);
-
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.insets = new Insets(180, 10, 5, 10);
-
         String nombreMostrado = (mascotaActual != null) ? mascotaActual.getNombre() : "Mascota";
         JLabel labelNombre = new JLabel(nombreMostrado, SwingConstants.CENTER);
         labelNombre.setFont(new Font("Arial", Font.BOLD, 18));
@@ -136,7 +119,6 @@ public class Interfaz extends JPanel {
         labelNombre.setOpaque(true);
         labelNombre.setBorder(BorderFactory.createEmptyBorder(4, 14, 4, 14));
         panelCentral.add(labelNombre, gbc);
-
         gbc.gridy = 1;
         gbc.insets = new Insets(10, 10, 0, 10);
         if (rutaImagenMascota != null && !rutaImagenMascota.isEmpty()) {
@@ -148,26 +130,16 @@ public class Interfaz extends JPanel {
                 panelCentral.add(labelAvatar, gbc);
             }
         }
-
         this.add(panelCentral, BorderLayout.CENTER);
-
-        // Panel inferior (PASEAR + estadísticas)
         this.add(crearPanelInferior(), BorderLayout.SOUTH);
-
-        // Rellenar estadísticas iniciales
         actualizarEstadisticasVisuales();
-
-        // Detectar cuando se vuelve a esta pantalla para refrescar
         this.addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
             public void componentShown(java.awt.event.ComponentEvent e) {
                 actualizarEstadisticasVisuales();
-                System.out.println("Pantalla principal refrescada.");
             }
         });
     }
-
-    // ========== MÉTODOS DE CARGA DE FONDO, REINICIO, ESTADÍSTICAS, ETC. ==========
 
     private void cargarImagenFondo() {
         String[] rutas = {
@@ -181,54 +153,34 @@ public class Interfaz extends JPanel {
             URL url = getClass().getResource(ruta);
             if (url != null) {
                 imagenFondo = new ImageIcon(url).getImage();
-                System.out.println("Fondo cargado desde: " + ruta);
                 return;
             }
         }
         File archivo = new File("fondo_tienda.jpg");
         if (archivo.exists()) {
             imagenFondo = new ImageIcon(archivo.getAbsolutePath()).getImage();
-            System.out.println("Fondo cargado desde archivo: " + archivo.getAbsolutePath());
-        } else {
-            System.out.println("No se encontró la imagen de fondo.");
         }
     }
 
-    /**
-     * Reinicia completamente el juego: borra partida.xml y vuelve a la pantalla de selección de mascota.
-     */
     private void reiniciarJuegoCompleto() {
         int confirmacion = JOptionPane.showConfirmDialog(this,
-                "¿Estás seguro de que quieres reiniciar todo el juego?\nSe perderán todos los progresos.",
+                "Estas seguro de que quieres reiniciar todo el juego? Se perderan todos los progresos.",
                 "Reiniciar partida",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE);
         if (confirmacion == JOptionPane.YES_OPTION) {
             try {
-                // 1. Borrar archivo de partida
                 File archivoPartida = new File("partida.xml");
-                if (archivoPartida.exists()) {
-                    archivoPartida.delete();
-                    System.out.println("Archivo partida.xml eliminado.");
-                }
+                if (archivoPartida.exists()) archivoPartida.delete();
 
-                // 2. Limpiar el contenedor principal (todas las pantallas)
                 contenedorPrincipal.removeAll();
-
-                // 3. Volver a crear la pantalla de selección de mascota
+                JPanel menuInicio = menuRaiz.getMenuInicioPanel();
+                if (menuInicio != null) contenedorPrincipal.add(menuInicio, "MENU_INICIO");
                 SeleccionMascota pantallaMascota = new SeleccionMascota(cardLayout, contenedorPrincipal, menuRaiz);
                 contenedorPrincipal.add(pantallaMascota, "PANTALLA_SELECCION_MASCOTA");
-
-                // (Opcional) Si se quiere tener también el menú de inicio, se puede añadir, pero no es necesario
-                // porque el flujo normal desde selección ya lleva a la interfaz.
-
-                // 4. Mostrar la pantalla de selección
                 cardLayout.show(contenedorPrincipal, "PANTALLA_SELECCION_MASCOTA");
-
-                // 5. Refrescar
                 contenedorPrincipal.revalidate();
                 contenedorPrincipal.repaint();
-
                 JOptionPane.showMessageDialog(this, "Juego reiniciado correctamente.", "Reinicio", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -237,15 +189,10 @@ public class Interfaz extends JPanel {
         }
     }
 
-    /**
-     * Construye el panel inferior (PASEAR + estadísticas)
-     */
     private JPanel crearPanelInferior() {
         JPanel panelSur = new JPanel(new BorderLayout());
         panelSur.setOpaque(false);
         panelSur.setBorder(BorderFactory.createEmptyBorder(0, 15, 15, 15));
-
-        // Botón PASear (sin emojis)
         JButton btnPasear = new JButton("PASEAR");
         btnPasear.setFont(new Font("Arial", Font.BOLD, 16));
         btnPasear.setBackground(new Color(100, 180, 100));
@@ -254,9 +201,7 @@ public class Interfaz extends JPanel {
         btnPasear.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnPasear.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Color.WHITE, 2, true),
-                BorderFactory.createEmptyBorder(10, 25, 10, 25)
-        ));
-
+                BorderFactory.createEmptyBorder(10, 25, 10, 25)));
         btnPasear.addActionListener(e -> {
             if (mascotaActual != null) {
                 mascotaActual.pasear();
@@ -264,45 +209,36 @@ public class Interfaz extends JPanel {
                 actualizarMonedasVisuales();
                 mascotaActual.guardarPartidaCompleta();
                 JOptionPane.showMessageDialog(this,
-                        mascotaActual.getNombre() + " ha dado un paseo.\n" +
-                                "Energía: " + mascotaActual.getEnergia() + " | Felicidad: " + mascotaActual.getFelicidad(),
-                        "Paseo completado",
-                        JOptionPane.INFORMATION_MESSAGE);
+                        mascotaActual.getNombre() + " ha dado un paseo.\nEnergia: " + mascotaActual.getEnergia() + " | Felicidad: " + mascotaActual.getFelicidad(),
+                        "Paseo completado", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(this, "No hay mascota activa.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
-
-        // Panel de estadísticas
         JPanel cajaStats = new JPanel();
         cajaStats.setLayout(new BoxLayout(cajaStats, BoxLayout.Y_AXIS));
         cajaStats.setBackground(new Color(0, 0, 0, 140));
         cajaStats.setOpaque(true);
         cajaStats.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
-
         labelNivel = new JLabel("NIVEL: 1");
         labelNivel.setFont(new Font("Arial", Font.BOLD, 14));
         labelNivel.setForeground(Color.YELLOW);
         labelNivel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         barraHambre = configurarBarraProgreso(Color.ORANGE);
         barraFelicidad = configurarBarraProgreso(Color.PINK);
         barraEnergia = configurarBarraProgreso(Color.CYAN);
         barraExp = configurarBarraProgreso(Color.GREEN);
-
         cajaStats.add(labelNivel);
         cajaStats.add(Box.createVerticalStrut(5));
         cajaStats.add(crearFilaStat("Hambre:", barraHambre));
         cajaStats.add(Box.createVerticalStrut(5));
         cajaStats.add(crearFilaStat("Felicidad:", barraFelicidad));
         cajaStats.add(Box.createVerticalStrut(5));
-        cajaStats.add(crearFilaStat("Energía:", barraEnergia));
+        cajaStats.add(crearFilaStat("Energia:", barraEnergia));
         cajaStats.add(Box.createVerticalStrut(5));
         cajaStats.add(crearFilaStat("Exp:", barraExp));
-
         panelSur.add(btnPasear, BorderLayout.WEST);
         panelSur.add(cajaStats, BorderLayout.EAST);
-
         return panelSur;
     }
 
@@ -343,9 +279,7 @@ public class Interfaz extends JPanel {
         }
     }
 
-    public Animal getMascota() {
-        return this.mascotaActual;
-    }
+    public Animal getMascota() { return mascotaActual; }
 
     public void actualizarMonedasVisuales() {
         if (labelMonedas != null && mascotaActual != null) {

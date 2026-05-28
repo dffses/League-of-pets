@@ -1,7 +1,6 @@
 package ventana;
+
 import animales.*;
-
-
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
@@ -11,49 +10,33 @@ public class SeleccionMascota extends JPanel {
     private Menu menuRaiz;
 
     public SeleccionMascota(CardLayout cardLayout, JPanel contenedorPrincipal, Menu menuRaiz) {
-        // Usamos GridBagLayout en el panel principal para controlar las alturas perfectamente
         this.setLayout(new GridBagLayout());
-
-        this.menuRaiz=menuRaiz;
-
-        // Cargar el fondo de la Pet Shop
+        this.menuRaiz = menuRaiz;
         URL urlFondo = getClass().getResource("fondo_primero.jpg");
-        if (urlFondo != null) {
-            imagenFondo = new ImageIcon(urlFondo).getImage();
-        }
+        if (urlFondo != null) imagenFondo = new ImageIcon(urlFondo).getImage();
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
-
-        // ¡Selecciona a tu Compañero!
-        JLabel titulo = new JLabel("¡Selecciona a tu Compañero!", SwingConstants.CENTER);
+        JLabel titulo = new JLabel("Selecciona a tu Compañero!", SwingConstants.CENTER);
         titulo.setFont(new Font("Arial", Font.BOLD, 28));
         titulo.setForeground(Color.BLACK);
-
-        // Subimos el primer número a 200 para que el título baje bastante
         gbc.insets = new Insets(200, 0, 10, 0);
         this.add(titulo, gbc);
 
-        // la mascota a altura de alfombra
         gbc.gridy = 1;
         gbc.weighty = 1.0;
-
-        // Ajustamos este margen superior para que las mascotas no se pisen con el título modificado
         gbc.insets = new Insets(40, 20, 20, 20);
         gbc.fill = GridBagConstraints.BOTH;
 
         JPanel panelMascotas = new JPanel(new GridLayout(1, 3, 30, 0));
-        panelMascotas.setOpaque(false); // Transparente para ver el fondo de la tienda
+        panelMascotas.setOpaque(false);
 
-        // Creamos los botones gigantes con los nombres arriba y subrayados transparentes
-        // Pasamos también la especie correspondiente para recuperarla en la acción
         JButton btnPerro = crearBotonTransparente("Bran", "bran_perro.png");
         JButton btnGato = crearBotonTransparente("Shasha", "shasha_gato.png");
         JButton btnCocodrilo = crearBotonTransparente("Steve", "cocodrilo.png");
 
-        // Acciones al hacer clic asociando cada mascota a su Especie correspondiente
         btnPerro.addActionListener(e -> avanzarAInterfaz("Bran", Especie.PERRO, "imagenes.bran_perro.png", cardLayout, contenedorPrincipal));
         btnGato.addActionListener(e -> avanzarAInterfaz("Shasha", Especie.GATO, "imagenes.shasha_gato.png", cardLayout, contenedorPrincipal));
         btnCocodrilo.addActionListener(e -> avanzarAInterfaz("Steve", Especie.COCODRILO, "imagenes.cocodrilo.png", cardLayout, contenedorPrincipal));
@@ -61,34 +44,25 @@ public class SeleccionMascota extends JPanel {
         panelMascotas.add(btnPerro);
         panelMascotas.add(btnGato);
         panelMascotas.add(btnCocodrilo);
-
         this.add(panelMascotas, gbc);
     }
 
-    // Método que crea el botón invisible, la foto gigante y el nombre arriba con subrayado pastel translúcido
     private JButton crearBotonTransparente(String nombre, String rutaImagen) {
         JButton boton = new JButton();
         boton.setLayout(new BorderLayout());
-
-        // Volvemos el botón completamente transparente para eliminar el bloque blanco feo
         boton.setContentAreaFilled(false);
         boton.setBorderPainted(false);
         boton.setOpaque(false);
         boton.setFocusPainted(false);
 
-        // nombre de la mascota estilizado
         JLabel labelNombre = new JLabel(nombre, SwingConstants.CENTER);
         labelNombre.setFont(new Font("Arial", Font.BOLD, 18));
         labelNombre.setForeground(new Color(60, 60, 60));
-
-        // Color Baby Blue con transparencia
         labelNombre.setBackground(new Color(202, 228, 241, 80));
         labelNombre.setOpaque(true);
         labelNombre.setBorder(BorderFactory.createEmptyBorder(2, 12, 2, 12));
-
         boton.add(labelNombre, BorderLayout.NORTH);
 
-        // imagen mascota centro
         URL urlImg = getClass().getResource(rutaImagen);
         if (urlImg != null) {
             Image imgEscalada = new ImageIcon(urlImg).getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
@@ -99,50 +73,29 @@ public class SeleccionMascota extends JPanel {
         } else {
             boton.add(new JLabel("[Sin Foto]", SwingConstants.CENTER), BorderLayout.CENTER);
         }
-
         return boton;
     }
 
-    /**
-     * MODIFICADO: Ahora el método recibe la Especie además del nombre y la ruta,
-     * permitiendo instanciar el objeto Animal con todos sus requisitos del constructor.
-     */
-    private void avanzarAInterfaz(String nombre, Especie especie, String ruta, CardLayout cl, JPanel cont) {
-        // Crear mascota nueva utilizando polimorfismo para evitar instanciar la clase abstracta Animal
+    private void avanzarAInterfaz(String nombre, Especie especie, String rutaImagen, CardLayout cl, JPanel contenedor) {
         Animal mascotaNueva = null;
-
         switch (especie) {
-            case PERRO:
-                mascotaNueva = new Perro(nombre, especie, Genero.Macho);
-                break;
-            case GATO:
-                // Si tienes clase Gato usa: new Gato(nombre, especie, Genero.Macho);
-                mascotaNueva = new Gato(nombre, especie, Genero.Hembra);
-                break;
-            case COCODRILO:
-                // Si tienes clase Cocodrilo usa: new Cocodrilo(nombre, especie, Genero.Macho);
-                mascotaNueva = new Cocodrilo(nombre, especie, Genero.Macho);
-                break;
+            case PERRO: mascotaNueva = new Perro(nombre, especie, Genero.Macho); break;
+            case GATO: mascotaNueva = new Gato(nombre, especie, Genero.Hembra); break;
+            case COCODRILO: mascotaNueva = new Cocodrilo(nombre, especie, Genero.Macho); break;
         }
-
         if (mascotaNueva != null) {
-            //  CRUCIAL: Guardar la partida inmediatamente al crear la mascota
-            mascotaNueva.guardarPartidaCompleta();
-
-            // Enviar el objeto a la interfaz (Corregido: quitado el parámetro erróneo ',menu')
-            Interfaz miInterfaz = new Interfaz(cl, cont, mascotaNueva, ruta,menuRaiz);
-            cont.add(miInterfaz, "INTERFAZ_PRINCIPAL");
-            cl.show(cont, "INTERFAZ_PRINCIPAL");
-            cont.revalidate();
-            cont.repaint();
+            mascotaNueva.guardarPartidaCompleta();  // Guarda inmediatamente
+            Interfaz miInterfaz = new Interfaz(cl, contenedor, mascotaNueva, rutaImagen, menuRaiz);
+            contenedor.add(miInterfaz, "INTERFAZ_PRINCIPAL");
+            cl.show(contenedor, "INTERFAZ_PRINCIPAL");
+            contenedor.revalidate();
+            contenedor.repaint();
         }
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (imagenFondo != null) {
-            g.drawImage(imagenFondo, 0, 0, getWidth(), getHeight(), this);
-        }
+        if (imagenFondo != null) g.drawImage(imagenFondo, 0, 0, getWidth(), getHeight(), this);
     }
 }
