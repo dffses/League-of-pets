@@ -201,7 +201,7 @@ public class Packman extends JPanel implements KeyListener {
                         mascotaActual.guardarPartidaCompleta();
                         actualizarInterfazPrincipal();
                         JOptionPane.showMessageDialog(this,
-                                "¡Felicidades! Has recolectado todas las frutas.\n¡Tu mascota ha ganado " + recompensaMonedas + " monedas! 🪙",
+                                "¡Felicidades! Has recolectado todas las frutas.\n¡Tu mascota ha ganado " + recompensaMonedas + " monedas! ",
                                 "¡Victoria!", JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(this,
