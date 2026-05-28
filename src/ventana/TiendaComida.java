@@ -182,30 +182,34 @@ public class TiendaComida extends JPanel {
      * Procesa la compra de un producto
      */
     private void procesarCompra(String nombre, int precio) {
-        // Llamamos al método de la mascota para comprar
-        boolean compraExitosa = mascotaActual.comprarComida(precio);
+        // 1. Calculamos cuánta hambre sacia cada alimento
+        int plusHambre = 0;
+        switch (nombre) {
+            case "Pan":
+                plusHambre = 10;
+                break;
+            case "Leche":
+                plusHambre = 15;
+                break;
+            case "Manzanas":
+                plusHambre = 20;
+                break;
+            case "Pescado":
+                plusHambre = 35; // El pescado llena mucho más
+                break;
+            default:
+                plusHambre = 10;
+        }
+
+        // 2. Modificamos la llamada para pasarle el precio Y el beneficio de hambre
+        // (Asegúrate de adaptar este método en tu clase Animal como muestro en el Paso 2)
+        boolean compraExitosa = mascotaActual.comprarComida(precio, plusHambre);
 
         if (compraExitosa) {
-            // Actualizar el contador de monedas en la tienda
-            lblMonedas.setText(" " + mascotaActual.getMonedas() + " monedas");
-
-            // Efecto visual: cambiar color del botón temporalmente
-            JOptionPane.showMessageDialog(this,
-                    " ¡Compra realizada!\n\nHas comprado " + nombre + " por " + precio + " monedas.\n\n" +
-                            " Tu mascota ha comido y está más feliz.",
-                    "Compra exitosa",
-                    JOptionPane.INFORMATION_MESSAGE);
-
-            // Actualizar también la interfaz principal
-            actualizarInterfazPrincipal();
+            lblMonedas.setText("Monedas: " + mascotaActual.getMonedas() + " 🪙 ");
+            JOptionPane.showMessageDialog(this, "¡Compraste " + nombre + "!\nTu mascota recuperó +" + plusHambre + " de hambre.");
         } else {
-            JOptionPane.showMessageDialog(this,
-                    " No tienes suficientes monedas\n\n" +
-                            "Necesitas: " + precio + " monedas\n" +
-                            "Tienes: " + mascotaActual.getMonedas() + " monedas\n\n" +
-                            "¡Juega para ganar más monedas!",
-                    "Saldo insuficiente",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "No tienes suficientes monedas para comprar " + nombre, "Error de saldo", JOptionPane.ERROR_MESSAGE);
         }
     }
 

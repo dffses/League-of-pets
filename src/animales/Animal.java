@@ -62,21 +62,24 @@ public class Animal {
      * Resta monedas al comprar comida en la tienda.
      * Devuelve 'true' si la compra fue exitosa, o 'false' si no tiene dinero suficiente.
      */
-    public boolean comprarComida(int precioComida) {
-        if (this.monedas >= precioComida) {
-            this.monedas -= precioComida;
-            System.out.println("Compra realizada. Gastaste " + precioComida + " monedas. Saldo restante: " + this.monedas);
+    public boolean comprarComida(int precio, int plusHambre) {
+        if (this.monedas >= precio) {
+            this.monedas -= precio;   // Resta el dinero
 
-            // Efecto secundario de comer
-            this.comer();
+            // Alimenta sumando el plus específico de la comida
+            this.hambre += plusHambre;
 
-            // Guardamos el nuevo saldo en el XML
-            guardarMonedasEnXML();
+            // Si tienes un método limitarValores() para que no pase de 100, llámalo aquí:
+            if (this.hambre > 100) this.hambre = 100;
+
+            // También puedes disparar los extras de energía/felicidad genéricos de comer:
+            this.energia -= 5;
+
+            // Guardamos los cambios inmediatamente en el XML
+            this.guardarPartidaCompleta();
             return true;
-        } else {
-            System.out.println("¡No tienes suficientes monedas! Necesitas " + precioComida + " y tienes " + this.monedas);
-            return false;
         }
+        return false; // No hay dinero suficiente
     }
 
     /**
