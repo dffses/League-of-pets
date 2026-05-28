@@ -11,11 +11,11 @@ import java.awt.*;
 
 public class SeleccionJuegos extends JPanel {
 
-    private Animal mascotaActual;  // ✅ Guardamos la mascota
+    private Animal mascotaActual;  // Guardamos la mascota
 
-    // ✅ MODIFICADO: Constructor ahora recibe la mascota
+    // MODIFICADO: Constructor ahora recibe la mascota
     public SeleccionJuegos(CardLayout cardLayout, JPanel contenedorPrincipal, Animal mascota) {
-        this.mascotaActual = mascota;  // ✅ Guardamos referencia
+        this.mascotaActual = mascota;  //  Guardamos referencia
 
         this.setLayout(new BorderLayout());
         this.setBackground(new Color(240, 240, 240));

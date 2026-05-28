@@ -11,6 +11,12 @@ public class Interfaz extends JPanel {
     private JLabel labelMonedas;
     private CardLayout cardLayout;
     private JPanel contenedorPrincipal;
+    //atributos para que se vean las estadisticas
+    private JLabel labelNivel;
+    private JProgressBar barraHambre;
+    private JProgressBar barraFelicidad;
+    private JProgressBar barraEnergia;
+    private JProgressBar barraExp;
 
     public Interfaz(CardLayout cardLayout, JPanel contenedorPrincipal, Animal mascota, String rutaImagenMascota) {
         this.cardLayout = cardLayout;
@@ -122,6 +128,19 @@ public class Interfaz extends JPanel {
         }
 
         this.add(panelCentral, BorderLayout.CENTER);
+        //añadir panel en la parte de abajo
+        this.add(crearPanelInferiorEstadisticas(), BorderLayout.SOUTH);
+        //rellenamos barras
+        actualizarEstadisticasVisuales();
+        this.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentShown(java.awt.event.ComponentEvent e) {
+                // En cuanto el usuario vuelve de la Tienda o de los Juegos,
+                // leemos el XML o el objeto actualizado y repintamos las barras.
+                actualizarEstadisticasVisuales();
+                System.out.println("🔄 ¡Pantalla principal detectada! Estadísticas refrescadas.");
+            }
+        });
     }
 
     // ✅ GETTER para que Menu pueda guardar la partida
@@ -133,6 +152,7 @@ public class Interfaz extends JPanel {
     public void actualizarMonedasVisuales() {
         if (labelMonedas != null && mascotaActual != null) {
             labelMonedas.setText(mascotaActual.getMonedas() + " 🪙");
+            actualizarEstadisticasVisuales();
             System.out.println("💰 Monedas actualizadas en Interfaz: " + mascotaActual.getMonedas());
         }
     }
@@ -142,6 +162,7 @@ public class Interfaz extends JPanel {
         if (mascotaActual != null) {
             mascotaActual.ganarMonedas(cantidad);
             actualizarMonedasVisuales();
+            actualizarEstadisticasVisuales();
             // Guardar automáticamente después de ganar monedas
             mascotaActual.guardarPartidaCompleta();
         }
@@ -154,4 +175,96 @@ public class Interfaz extends JPanel {
             g.drawImage(imagenFondo, 0, 0, getWidth(), getHeight(), this);
         }
     }
+    //metodos para que se vean las estadisticas
+    /**
+     * Une un texto identificador junto a su respectiva barra de progreso en horizontal.
+     */
+    private JPanel crearFilaStat(String texto, JProgressBar barra) {
+        JPanel fila = new JPanel(new BorderLayout(5, 0));
+        fila.setOpaque(false);
+
+        JLabel lbl = new JLabel(texto);
+        lbl.setFont(new Font("Arial", Font.BOLD, 12));
+        lbl.setForeground(Color.WHITE);
+        lbl.setPreferredSize(new Dimension(65, 16)); // Tamaño fijo para alinear las barras
+
+        fila.add(lbl, BorderLayout.WEST);
+        fila.add(barra, BorderLayout.CENTER);
+        return fila;
+    }
+    /**
+     * Método auxiliar para estilizar de forma uniforme los JProgressBar.
+     */
+    private JProgressBar configurarBarraProgreso(Color colorBarra) {
+        JProgressBar barra = new JProgressBar(0, 100);
+        barra.setPreferredSize(new Dimension(110, 16));
+        barra.setForeground(colorBarra);
+        barra.setBackground(new Color(60, 60, 60)); // Fondo interno gris oscuro
+        barra.setStringPainted(true); // Permite ver el texto del porcentaje/valor dentro
+        barra.setFont(new Font("Arial", Font.BOLD, 11));
+        barra.setBorderPainted(false);
+        return barra;
+    }
+    /**
+     * Construye de manera limpia el contenedor inferior alineado a la derecha.
+     */
+    private JPanel crearPanelInferiorEstadisticas() {
+        // Contenedor principal del Sur orientado a la derecha
+        JPanel panelSur = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        panelSur.setOpaque(false);
+        // Margen inferior y derecho para separar la caja de los bordes de la ventana
+        panelSur.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 15));
+
+        // Caja negra semitransparente para agrupar las estadísticas de fondo
+        JPanel cajaStats = new JPanel();
+        cajaStats.setLayout(new BoxLayout(cajaStats, BoxLayout.Y_AXIS));
+        cajaStats.setBackground(new Color(0, 0, 0, 140)); // Fondo oscuro traslúcido
+        cajaStats.setOpaque(true);
+        cajaStats.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+
+        // Inicializar los componentes visuales
+        labelNivel = new JLabel("NIVEL: 1");
+        labelNivel.setFont(new Font("Arial", Font.BOLD, 14));
+        labelNivel.setForeground(Color.YELLOW); // Color dorado para destacar el nivel
+        labelNivel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Inicializamos las barras de progreso (mínimo 0, máximo 100)
+        barraHambre = configurarBarraProgreso(Color.ORANGE);
+        barraFelicidad = configurarBarraProgreso(Color.PINK);
+        barraEnergia = configurarBarraProgreso(Color.CYAN);
+        barraExp = configurarBarraProgreso(Color.GREEN);
+
+        // Añadimos todo a la caja vertical con pequeños espacios de separación
+        cajaStats.add(labelNivel);
+        cajaStats.add(Box.createVerticalStrut(5));
+        cajaStats.add(crearFilaStat("Hambre:", barraHambre));
+        cajaStats.add(Box.createVerticalStrut(5));
+        cajaStats.add(crearFilaStat("Felicidad:", barraFelicidad));
+        cajaStats.add(Box.createVerticalStrut(5));
+        cajaStats.add(crearFilaStat("Energía:", barraEnergia));
+        cajaStats.add(Box.createVerticalStrut(5));
+        cajaStats.add(crearFilaStat("Exp:", barraExp));
+
+        panelSur.add(cajaStats);
+        return panelSur;
+    }
+    public void actualizarEstadisticasVisuales() {
+        if (mascotaActual != null) {
+            labelNivel.setText("NIVEL: " + mascotaActual.getNivel());
+
+            barraHambre.setValue(mascotaActual.getHambre());
+            barraHambre.setString(mascotaActual.getHambre() + "/100");
+
+            barraFelicidad.setValue(mascotaActual.getFelicidad());
+            barraFelicidad.setString(mascotaActual.getFelicidad() + "/100");
+
+            barraEnergia.setValue(mascotaActual.getEnergia());
+            barraEnergia.setString(mascotaActual.getEnergia() + "/100");
+
+            barraExp.setValue(mascotaActual.getExperiencia());
+            barraExp.setString(mascotaActual.getExperiencia() + "%");
+        }
+    }
 }
+
+

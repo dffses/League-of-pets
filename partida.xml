@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <partida>
-    <nombre>Bran</nombre>
-    <especie>PERRO</especie>
+    <nombre>Shasha</nombre>
+    <especie>GATO</especie>
     <genero>Macho</genero>
-    <hambre>40</hambre>
-    <felicidad>55</felicidad>
-    <limpieza>50</limpieza>
+    <hambre>50</hambre>
+    <felicidad>50</felicidad>
     <energia>50</energia>
     <nivel>1</nivel>
-    <experiencia>15</experiencia>
-    <monedas>85</monedas>
+    <experiencia>60</experiencia>
+    <monedas>205</monedas>
 </partida>

@@ -41,7 +41,14 @@ public class Sudoku extends JPanel {
         JPanel panelNorte = new JPanel(new BorderLayout());
         panelNorte.setBackground(new Color(240, 240, 240));
         JButton btnVolver = new JButton("⬅ Salir del Sudoku");
-        btnVolver.addActionListener(e -> cl.show(cont, "PANTALLA_CUADRICULA"));
+        //cambio
+        btnVolver.addActionListener(e -> {
+
+            mascotaActual.jugar();
+            mascotaActual.guardarPartidaCompleta();
+
+            cl.show(cont, "PANTALLA_CUADRICULA");
+        });
 
         lblFallos = new JLabel("Fallos: 0 / " + MAX_FALLOS + "    ");
         lblFallos.setFont(new Font("Arial", Font.BOLD, 14));
@@ -120,6 +127,9 @@ public class Sudoku extends JPanel {
                 if (completo()) {
                     int recompensaSudoku = 200; // Monedas por resolver el Sudoku entero
                     mascotaActual.ganarMonedas(recompensaSudoku);
+                    //cambio2
+                    mascotaActual.jugar();
+                    mascotaActual.guardarPartidaCompleta();
                     actualizarInterfazPrincipal();
 
                     JOptionPane.showMessageDialog(this,
@@ -147,6 +157,9 @@ public class Sudoku extends JPanel {
         fallos++;
         lblFallos.setText("Fallos: " + fallos + " / " + MAX_FALLOS + "    ");
         if (fallos >= MAX_FALLOS) {
+            //cambio3
+            mascotaActual.jugar();
+            mascotaActual.guardarPartidaCompleta();
             JOptionPane.showMessageDialog(this, "Has cometido " + MAX_FALLOS + " fallos. ¡Has perdido!", "Game Over", JOptionPane.ERROR_MESSAGE);
             cl.show(cont, "PANTALLA_CUADRICULA");
         }
@@ -237,4 +250,5 @@ public class Sudoku extends JPanel {
             parent = parent.getParent();
         }
     }
+
 }

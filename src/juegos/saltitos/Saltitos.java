@@ -57,6 +57,11 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
         JButton btnVolver = new JButton("⬅ Salir de Saltitos");
         btnVolver.addActionListener(e -> {
             temporizador.stop(); // Paramos el bucle del juego al salir
+            //cambio 1 actualiza estadistica al abandonar voluntariamente
+            if (mascotaActual != null) {
+                mascotaActual.jugar();
+                mascotaActual.guardarPartidaCompleta();
+            }
             cl.show(cont, "PANTALLA_CUADRICULA");
         });
 
@@ -135,6 +140,11 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
             // 2. Calculamos las monedas: 50 monedas por cada 60 segundos (1 minuto)
             int bloquesDeUnMinuto = segundosJugados / 60;
             int monedasGanadas = bloquesDeUnMinuto * 50;
+            //cambio 2 perder
+            if (mascotaActual != null) {
+                mascotaActual.jugar(); // Suma felicidad, gasta energía y da experiencia
+                mascotaActual.guardarPartidaCompleta(); // Persiste los datos en tu XML
+            }
 
             // 3. Entregamos la recompensa si ha sobrevivido lo suficiente
             if (monedasGanadas > 0) {

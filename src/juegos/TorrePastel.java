@@ -82,6 +82,9 @@ public class TorrePastel extends JPanel {
             if (pisos > 0 && !juegoTerminado) {
                 int monedasGanadas = pisos * 5;
                 mascotaActual.ganarMonedas(monedasGanadas);
+                //cambios
+                mascotaActual.jugar();
+                mascotaActual.guardarPartidaCompleta();
                 JOptionPane.showMessageDialog(this, "Dejaste la tarta a medias. ¡Tu mascota ganó " + monedasGanadas + " monedas! 🪙");
             }
             cl.show(cont, "PANTALLA_CUADRICULA");
@@ -120,6 +123,10 @@ public class TorrePastel extends JPanel {
 
                     if (monedasGanadas > 0) {
                         mascotaActual.ganarMonedas(monedasGanadas);
+                        //cambio2
+                        mascotaActual.jugar();
+                        mascotaActual.guardarPartidaCompleta();
+
                         actualizarInterfazPrincipal();
                         JOptionPane.showMessageDialog(TorrePastel.this,
                                 "¡La tarta se derrumbó!\nPisos totales: " + pisos + "\n¡Has ganado " + monedasGanadas + " monedas! 🪙",

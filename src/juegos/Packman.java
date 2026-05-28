@@ -60,6 +60,11 @@ public class Packman extends JPanel implements KeyListener {
         JButton btnVolver = new JButton("⬅ Salir del Juego");
         btnVolver.addActionListener(e -> {
             if (relojJuego != null) relojJuego.stop();
+            //cambio1 guardae al abandonar voluntariamente
+            if (mascotaActual != null) {
+                mascotaActual.jugar();
+                mascotaActual.guardarPartidaCompleta();
+            }
             cl.show(cont, "PANTALLA_CUADRICULA");
         });
 
@@ -73,6 +78,11 @@ public class Packman extends JPanel implements KeyListener {
             } else {
                 juegoTerminado = true;
                 relojJuego.stop();
+                //cambio2 guardar cuando se agota el tiempo
+                if (mascotaActual != null) {
+                    mascotaActual.jugar();
+                    mascotaActual.guardarPartidaCompleta();
+                }
 
                 JOptionPane.showMessageDialog(this,
                         "¡Se acabó el tiempo! No has conseguido recolectar todas las frutas.",
@@ -186,6 +196,9 @@ public class Packman extends JPanel implements KeyListener {
                     // PROTECCIÓN: Si la mascota es null, evitamos que reviente la app
                     if (mascotaActual != null) {
                         mascotaActual.ganarMonedas(recompensaMonedas);
+                        //cambio3 despues de ganar
+                        mascotaActual.jugar();
+                        mascotaActual.guardarPartidaCompleta();
                         actualizarInterfazPrincipal();
                         JOptionPane.showMessageDialog(this,
                                 "¡Felicidades! Has recolectado todas las frutas.\n¡Tu mascota ha ganado " + recompensaMonedas + " monedas! 🪙",
