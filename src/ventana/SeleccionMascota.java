@@ -8,7 +8,12 @@ import java.net.URL;
 public class SeleccionMascota extends JPanel {
     private Image imagenFondo;
     private Menu menuRaiz;
-
+    /**
+     * Construye la interfaz de selección con GridBagLayout y los botones de los animales.
+     * * @param cardLayout Administrador de capas.
+     * @param contenedorPrincipal Contenedor de las pantallas.
+     * @param menuRaiz Instancia del marco principal.
+     */
     public SeleccionMascota(CardLayout cardLayout, JPanel contenedorPrincipal, Menu menuRaiz) {
         this.setLayout(new GridBagLayout());
         this.menuRaiz = menuRaiz;
@@ -46,7 +51,12 @@ public class SeleccionMascota extends JPanel {
         panelMascotas.add(btnCocodrilo);
         this.add(panelMascotas, gbc);
     }
-
+    /**
+     * Crea un botón estilizado y transparente con la foto y nombre del animal.
+     * * @param nombre Nombre por defecto.
+     * @param rutaImagen Archivo de imagen.
+     * @return JButton configurado.
+     */
     private JButton crearBotonTransparente(String nombre, String rutaImagen) {
         JButton boton = new JButton();
         boton.setLayout(new BorderLayout());
@@ -75,7 +85,9 @@ public class SeleccionMascota extends JPanel {
         }
         return boton;
     }
-
+    /**
+     * Instancia la subclase de Animal correspondiente, guarda en XML y cambia a la interfaz de juego.
+     */
     private void avanzarAInterfaz(String nombre, Especie especie, String rutaImagen, CardLayout cl, JPanel contenedor) {
         Animal mascotaNueva = null;
         switch (especie) {

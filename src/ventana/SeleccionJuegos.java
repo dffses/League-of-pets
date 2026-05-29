@@ -13,14 +13,19 @@ import java.net.URL;
 public class SeleccionJuegos extends JPanel {
 
     private Animal mascotaActual;
-
+    /**
+     * Construye el menú de juegos con botones configurados con imagen y descripción.
+     * * @param cardLayout Administrador de capas.
+     * @param contenedorPrincipal Contenedor de pantallas.
+     * @param mascota Referencia de la mascota actual.
+     */
     public SeleccionJuegos(CardLayout cardLayout, JPanel contenedorPrincipal, Animal mascota) {
         this.mascotaActual = mascota;
 
         this.setLayout(new BorderLayout());
         this.setBackground(new Color(240, 240, 240));
 
-        // --- BOTÓN VOLVER (Norte) ---
+
         JButton btnVolver = new JButton("⬅ Volver al Menú");
         btnVolver.addActionListener(e -> {
             cardLayout.show(contenedorPrincipal, "INTERFAZ_PRINCIPAL");
@@ -31,12 +36,12 @@ public class SeleccionJuegos extends JPanel {
         panelNorte.add(btnVolver);
         this.add(panelNorte, BorderLayout.NORTH);
 
-        // --- REJILLA DE JUEGOS (Centro) con imágenes ---
+
         JPanel panelJuegos = new JPanel(new GridLayout(2, 2, 20, 20)); // 2x2 para 4 juegos
         panelJuegos.setOpaque(false);
         panelJuegos.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
-        // Array con nombre del juego, texto y ruta de imagen
+
         String[][] juegos = {
                 {"Packman", "Packman", "Packan.jpg"},
                 {"Saltitos", "Plataformas", "saltitol.jpg"},
@@ -75,18 +80,18 @@ public class SeleccionJuegos extends JPanel {
         boton.setFocusPainted(false);
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        // Panel para el contenido
+
         JPanel panelInterno = new JPanel(new BorderLayout());
         panelInterno.setOpaque(false);
         panelInterno.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // --- Título del juego ---
+
         JLabel labelTitulo = new JLabel(titulo, SwingConstants.CENTER);
         labelTitulo.setFont(new Font("Arial", Font.BOLD, 18));
         labelTitulo.setForeground(new Color(50, 50, 50));
         panelInterno.add(labelTitulo, BorderLayout.NORTH);
 
-        // --- Imagen del juego ---
+
         URL urlImagen = getClass().getResource("imagenes/" + rutaImagen);
         if (urlImagen != null) {
             ImageIcon iconoOriginal = new ImageIcon(urlImagen);
@@ -95,15 +100,15 @@ public class SeleccionJuegos extends JPanel {
             labelImagen.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             panelInterno.add(labelImagen, BorderLayout.CENTER);
         } else {
-            // Si no encuentra la imagen, muestra un placeholder
+
             JLabel labelPlaceholder = new JLabel("", SwingConstants.CENTER);
             labelPlaceholder.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 60));
             labelPlaceholder.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             panelInterno.add(labelPlaceholder, BorderLayout.CENTER);
-            System.out.println("⚠️ No se encontró la imagen: " + rutaImagen);
+            System.out.println(" No se encontró la imagen: " + rutaImagen);
         }
 
-        // --- Descripción del juego ---
+
         JLabel labelDescripcion = new JLabel(descripcion, SwingConstants.CENTER);
         labelDescripcion.setFont(new Font("Arial", Font.PLAIN, 12));
         labelDescripcion.setForeground(new Color(100, 100, 100));

@@ -18,7 +18,14 @@ public class Interfaz extends JPanel {
     private JProgressBar barraEnergia;
     private JProgressBar barraExp;
     private Menu menuRaiz;
-
+    /**
+     * Construye la interfaz principal, configura la botonera superior y el avatar.
+     * * @param cardLayout Administrador de capas.
+     * @param contenedorPrincipal Contenedor de pantallas.
+     * @param mascota Modelo de la mascota activa.
+     * @param rutaImagenMascota Ubicación de la imagen de la mascota.
+     * @param menuRaiz Instancia del marco principal.
+     */
     public Interfaz(CardLayout cardLayout, JPanel contenedorPrincipal, Animal mascota, String rutaImagenMascota, Menu menuRaiz) {
         this.cardLayout = cardLayout;
         this.contenedorPrincipal = contenedorPrincipal;
@@ -140,7 +147,9 @@ public class Interfaz extends JPanel {
             }
         });
     }
-
+    /**
+     * Intenta resolver la ruta de la textura de fondo buscando en múltiples localizaciones.
+     */
     private void cargarImagenFondo() {
         String[] rutas = {
                 "fondo_tienda.jpg",
@@ -161,7 +170,9 @@ public class Interfaz extends JPanel {
             imagenFondo = new ImageIcon(archivo.getAbsolutePath()).getImage();
         }
     }
-
+    /**
+     * Elimina el archivo de guardado XML local y fuerza el retorno a la pantalla inicial.
+     */
     private void reiniciarJuegoCompleto() {
         int confirmacion = JOptionPane.showConfirmDialog(this,
                 "Estas seguro de que quieres reiniciar todo el juego? Se perderan todos los progresos.",
@@ -188,7 +199,10 @@ public class Interfaz extends JPanel {
             }
         }
     }
-
+    /**
+     * Construye la barra de estado inferior con el botón de paseo y los medidores de estadísticas.
+     * * @return El panel inferior configurado.
+     */
     private JPanel crearPanelInferior() {
         JPanel panelSur = new JPanel(new BorderLayout());
         panelSur.setOpaque(false);
@@ -241,7 +255,9 @@ public class Interfaz extends JPanel {
         panelSur.add(cajaStats, BorderLayout.EAST);
         return panelSur;
     }
-
+    /**
+     * Añade una etiqueta descriptiva alineada con su barra de progreso.
+     */
     private JPanel crearFilaStat(String texto, JProgressBar barra) {
         JPanel fila = new JPanel(new BorderLayout(5, 0));
         fila.setOpaque(false);
@@ -253,7 +269,9 @@ public class Interfaz extends JPanel {
         fila.add(barra, BorderLayout.CENTER);
         return fila;
     }
-
+    /**
+     * Establece los estilos visuales por defecto para un objeto JProgressBar.
+     */
     private JProgressBar configurarBarraProgreso(Color colorBarra) {
         JProgressBar barra = new JProgressBar(0, 100);
         barra.setPreferredSize(new Dimension(110, 16));
@@ -264,7 +282,9 @@ public class Interfaz extends JPanel {
         barra.setBorderPainted(false);
         return barra;
     }
-
+    /**
+     * Sincroniza los valores de nivel, hambre, felicidad, energía y experiencia con los datos reales del modelo.
+     */
     public void actualizarEstadisticasVisuales() {
         if (mascotaActual != null) {
             labelNivel.setText("NIVEL: " + mascotaActual.getNivel());
@@ -280,14 +300,18 @@ public class Interfaz extends JPanel {
     }
 
     public Animal getMascota() { return mascotaActual; }
-
+    /**
+     * Actualiza el contador de monedas de la cabecera y refresca los medidores.
+     */
     public void actualizarMonedasVisuales() {
         if (labelMonedas != null && mascotaActual != null) {
             labelMonedas.setText(String.valueOf(mascotaActual.getMonedas()));
             actualizarEstadisticasVisuales();
         }
     }
-
+    /**
+     * Incrementa los fondos del jugador, refresca la UI y guarda los datos en disco de forma síncrona.
+     */
     public void ganarMonedasYActualizar(int cantidad) {
         if (mascotaActual != null) {
             mascotaActual.ganarMonedas(cantidad);

@@ -31,7 +31,12 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
     private CardLayout cl;
     private JPanel cont;
 
-    // MODIFICADO: El constructor ahora recibe CardLayout y el contenedor principal, igual que el Sudoku
+    /**
+     * Constructor principal que configura el panel de juego, inicializa el temporizador y genera el mapa de plataformas flotantes.
+     * @param cl El CardLayout encargado del flujo de navegación entre pantallas.
+     * @param cont El contenedor principal que aloja los distintos paneles.
+     * @param mascota El objeto Animal de la sesión actual que recibirá recompensas o desgaste.
+     */
     public Saltitos(CardLayout cl, JPanel cont, Animal mascota) {
         this.cl = cl;
         this.cont = cont;
@@ -50,14 +55,14 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
         this.setFocusable(true);
         this.setFocusTraversalKeysEnabled(false);
 
-        // --- DISEÑO CALCADO DE SUDOKU: Cabecera informativa y botón de huida rápida ---
+
         JPanel panelNorte = new JPanel(new BorderLayout());
         panelNorte.setBackground(new Color(240, 240, 240));
 
         JButton btnVolver = new JButton("⬅ Salir de Saltitos");
         btnVolver.addActionListener(e -> {
-            temporizador.stop(); // Paramos el bucle del juego al salir
-            //cambio 1 actualiza estadistica al abandonar voluntariamente
+            temporizador.stop();
+
             if (mascotaActual != null) {
                 mascotaActual.jugar();
                 mascotaActual.guardarPartidaCompleta();
@@ -74,7 +79,10 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
             plataformas.add(new Plataforma(aleatorio.nextInt(330), i * 70));
         }
     }
-
+    /**
+     * Se encarga de repintar los componentes visuales del minijuego en el panel gráfico.
+     * @param g El contexto de dibujo Graphics del componente.
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -96,7 +104,10 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
             p.dibujar(g);
         }
     }
-
+    /**
+     * Bucle lógico principal que actualiza las físicas del personaje, detecta colisiones, desplaza la pantalla y gestiona el Game Over.
+     * @param e Evento de acción disparado de forma recurrente por el temporizador.
+     */
     public void actionPerformed(ActionEvent e) {
         velocidadY += gravedad;
         y += velocidadY;
@@ -128,25 +139,25 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
         if (x < 0) x = 0;
         if (x > 360) x = 360;
 
-        // MODIFICADO: Aquí es cuando el jugador pierde (Game Over)
+
         if (y > 650) {
             temporizador.stop();
 
-            // 1. Calculamos cuánto tiempo ha pasado en segundos
+
             long tiempoFin = System.currentTimeMillis();
             long tiempoJugadoMilisegundos = tiempoFin - tiempoInicio;
             int segundosJugados = (int) (tiempoJugadoMilisegundos / 1000);
 
-            // 2. Calculamos las monedas: 50 monedas por cada 60 segundos (1 minuto)
+
             int bloquesDeUnMinuto = segundosJugados / 60;
             int monedasGanadas = bloquesDeUnMinuto * 50;
-            //cambio 2 perder
+
             if (mascotaActual != null) {
                 mascotaActual.jugar(); // Suma felicidad, gasta energía y da experiencia
                 mascotaActual.guardarPartidaCompleta(); // Persiste los datos en tu XML
             }
 
-            // 3. Entregamos la recompensa si ha sobrevivido lo suficiente
+
             if (monedasGanadas > 0) {
                 mascotaActual.ganarMonedas(monedasGanadas);
                 actualizarInterfazPrincipal();
@@ -158,8 +169,7 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
                         "Fin de la partida", JOptionPane.INFORMATION_MESSAGE);
             }
 
-            // MODIFICADO: En vez de resetear las variables y seguir jugando en bucle,
-            // redirigimos al usuario a la pantalla de selección tal como pedías.
+
             cl.show(cont, "PANTALLA_CUADRICULA");
             return;
         }
@@ -171,7 +181,10 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
     public void keyTyped(KeyEvent keyEvent) {
 
     }
-
+    /**
+     * Captura las pulsaciones de teclado para asignar velocidad horizontal en base a las flechas de dirección.
+     * @param e Evento del teclado que contiene información de la tecla presionada.
+     */
     public void keyPressed(KeyEvent e) {
         int tecla = e.getKeyCode();
         if (tecla == KeyEvent.VK_LEFT) {
@@ -181,7 +194,10 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
             velocidadX = 7;
         }
     }
-
+    /**
+     * Captura la liberación de teclas para detener el desplazamiento lateral del personaje cuando se sueltan las flechas.
+     * @param e Evento del teclado que contiene información de la tecla liberada.
+     */
     public void keyReleased(KeyEvent e) {
         int tecla = e.getKeyCode();
 
@@ -189,7 +205,9 @@ public class Saltitos extends JPanel implements ActionListener, KeyListener {
             velocidadX = 0;
         }
     }
-
+    /**
+     *Buscar la ventana principal y refrescar el marcador visual de monedas.
+     */
     private void actualizarInterfazPrincipal() {
         Component parent = this.getParent();
         while (parent != null) {

@@ -11,7 +11,12 @@ public class TiendaComida extends JPanel {
     private JLabel lblMonedas;
     private CardLayout cardLayout;
     private JPanel contenedorPrincipal;
-
+    /**
+     * Inicializa la tienda, el marcador de monedas y la rejilla con el catálogo de productos.
+     * * @param cardLayout Administrador de capas.
+     * @param contenedorPrincipal Contenedor de pantallas.
+     * @param mascota Mascota actual de la sesión.
+     */
     public TiendaComida(CardLayout cardLayout, JPanel contenedorPrincipal, Animal mascota) {
         this.cardLayout = cardLayout;
         this.contenedorPrincipal = contenedorPrincipal;
@@ -57,12 +62,12 @@ public class TiendaComida extends JPanel {
 
         this.add(panelNorte, BorderLayout.NORTH);
 
-        // --- CUADRÍCULA DE PRODUCTOS (Centro) CON IMÁGENES GRANDES ---
+
         JPanel panelProductos = new JPanel(new GridLayout(2, 2, 25, 25));
         panelProductos.setOpaque(false);
         panelProductos.setBorder(BorderFactory.createEmptyBorder(40, 50, 50, 50));
 
-        // Array con: nombre, precio, descripción, ruta de imagen
+
         Object[][] productos = {
                 {"Manzanas", 15, "Fruta fresca y crujiente", "Manzana.jpg"},
                 {"Pescado", 35, "Pescado fresco del día", "Pescado.jpg"},
@@ -83,7 +88,7 @@ public class TiendaComida extends JPanel {
 
         this.add(panelProductos, BorderLayout.CENTER);
 
-        // Panel inferior con instrucciones
+
         JPanel panelInferior = new JPanel(new FlowLayout());
         panelInferior.setOpaque(false);
         JLabel lblInstruccion = new JLabel(" Haz clic en cualquier producto para comprarlo y alimentar a tu mascota");
@@ -107,7 +112,7 @@ public class TiendaComida extends JPanel {
         boton.setFocusPainted(false);
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        // Cambiar color al pasar el ratón por encima
+
         boton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 boton.setBackground(new Color(255, 250, 240));
@@ -125,18 +130,18 @@ public class TiendaComida extends JPanel {
             }
         });
 
-        // Panel principal interno
+
         JPanel panelInterno = new JPanel(new BorderLayout(10, 10));
         panelInterno.setOpaque(false);
 
-        // --- PANEL SUPERIOR: Nombre del producto con emoji ---
+
         JLabel labelNombre = new JLabel(nombre, SwingConstants.CENTER);
         labelNombre.setFont(new Font("Arial", Font.BOLD, 20));
         labelNombre.setForeground(new Color(80, 60, 40));
         labelNombre.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         panelInterno.add(labelNombre, BorderLayout.NORTH);
 
-        // --- PANEL CENTRAL: Imagen del producto ---
+
         JPanel panelImagen = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelImagen.setOpaque(false);
 
@@ -149,7 +154,7 @@ public class TiendaComida extends JPanel {
             labelImagen.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             panelImagen.add(labelImagen);
         } else {
-            // Placeholder si no encuentra la imagen
+
             JLabel labelPlaceholder = new JLabel("", SwingConstants.CENTER);
             labelPlaceholder.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 80));
             panelImagen.add(labelPlaceholder);
@@ -157,7 +162,7 @@ public class TiendaComida extends JPanel {
         }
         panelInterno.add(panelImagen, BorderLayout.CENTER);
 
-        // --- PANEL INFERIOR: Precio y descripción ---
+
         JPanel panelInfo = new JPanel(new GridLayout(2, 1, 0, 5));
         panelInfo.setOpaque(false);
         panelInfo.setBorder(BorderFactory.createEmptyBorder(10, 0, 5, 0));
@@ -182,21 +187,21 @@ public class TiendaComida extends JPanel {
      * Procesa la compra de un producto
      */
     private void procesarCompra(String nombre, int precio) {
-        // Llamamos al método de la mascota para comprar
+
         boolean compraExitosa = mascotaActual.comprarComida(precio);
 
         if (compraExitosa) {
-            // Actualizar el contador de monedas en la tienda
+
             lblMonedas.setText(" " + mascotaActual.getMonedas() + " monedas");
 
-            // Efecto visual: cambiar color del botón temporalmente
+
             JOptionPane.showMessageDialog(this,
                     " ¡Compra realizada!\n\nHas comprado " + nombre + " por " + precio + " monedas.\n\n" +
                             " Tu mascota ha comido y está más feliz.",
                     "Compra exitosa",
                     JOptionPane.INFORMATION_MESSAGE);
 
-            // Actualizar también la interfaz principal
+
             actualizarInterfazPrincipal();
         } else {
             JOptionPane.showMessageDialog(this,

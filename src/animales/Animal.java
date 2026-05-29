@@ -23,7 +23,12 @@ public class Animal {
     protected int experiencia;
     protected int monedas;
 
-    // Constructor para mascota nueva
+    /**
+     * Constructor para inicializar una nueva mascota con estadísticas iniciales por defecto.
+     * * @param nombre El nombre que se le asignará al animal.
+     * @param especie La especie biológica de la mascota.
+     * @param genero El género del animal.
+     */
     public Animal(String nombre, Especie especie, Genero genero) {
         this.nombre = nombre;
         this.especie = especie;
@@ -36,7 +41,18 @@ public class Animal {
         this.monedas = 0;
     }
 
-    // Constructor completo para cargar desde XML (sin limpieza)
+    /**
+     * Constructor completo utilizado para restaurar el estado de una mascota desde un archivo de guardado.
+     * * @param nombre El nombre del animal.
+     * @param especie La especie del animal.
+     * @param genero El género del animal.
+     * @param hambre Nivel de hambre.
+     * @param felicidad Nivel de felicidad.
+     * @param energia Nivel de energía.
+     * @param nivel Nivel actual de la mascota.
+     * @param experiencia Puntos de experiencia acumulados.
+     * @param monedas Cantidad de monedas que posee.
+     */
     public Animal(String nombre, Especie especie, Genero genero,
                   int hambre, int felicidad, int energia,
                   int nivel, int experiencia, int monedas) {
@@ -51,8 +67,9 @@ public class Animal {
         this.monedas = monedas;
     }
 
-    // ========== PERSISTENCIA ==========
-
+    /**
+     * Guarda el estado actual de los atributos del animal en un archivo XML local.
+     */
     public void guardarPartidaCompleta() {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -83,6 +100,10 @@ public class Animal {
         }
     }
 
+    /**
+     * Carga y reconstruye la instancia del animal específico a partir del archivo XML guardado.
+     * * @return El objeto Animal cargado, o null si el archivo no existe o falla la lectura.
+     */
     public static Animal cargarPartidaXML() {
         File archivo = new File("partida.xml");
         if (!archivo.exists()) {
@@ -126,13 +147,24 @@ public class Animal {
             return null;
         }
     }
-
+    /**
+     * Extrae el contenido de texto de una etiqueta específica dentro del documento XML.
+     * * @param doc El documento XML sobre el que se realiza la búsqueda.
+     * @param etiqueta El nombre del nodo o etiqueta XML a buscar.
+     * @return El contenido de texto de la etiqueta, o una cadena vacía si no se encuentra.
+     */
     private static String obtenerTextoEtiqueta(Document doc, String etiqueta) {
         NodeList lista = doc.getElementsByTagName(etiqueta);
         if (lista.getLength() > 0) return lista.item(0).getTextContent();
         return "";
     }
-
+    /**
+     * Crea un nuevo elemento XML con texto y lo añade al nodo raíz proporcionado.
+     * * @param doc El documento XML de referencia.
+     * @param root El elemento raíz donde se insertará el nuevo nodo.
+     * @param tag El nombre de la etiqueta del nuevo elemento.
+     * @param value El contenido de texto para el nuevo elemento.
+     */
     private void addElement(Document doc, Element root, String tag, String value) {
         Element elem = doc.createElement(tag);
         elem.appendChild(doc.createTextNode(value));
@@ -140,13 +172,20 @@ public class Animal {
     }
 
     // ========== COMPORTAMIENTO ==========
-
+    /**
+     * Incrementa los fondos del animal y actualiza de inmediato el archivo de guardado.
+     * * @param cantidad Número de monedas a añadir.
+     */
     public void ganarMonedas(int cantidad) {
         this.monedas += cantidad;
         System.out.println("Has ganado " + cantidad + " monedas. Total: " + this.monedas);
         guardarPartidaCompleta();
     }
-
+    /**
+     * Gestiona el proceso de compra de alimento restando el coste e iniciando la acción de comer si hay saldo suficiente.
+     * * @param precio El coste monetario de la comida.
+     * @return true si la transacción se realiza con éxito, false en caso contrario.
+     */
     public boolean comprarComida(int precio) {
         if (this.monedas >= precio) {
             this.monedas -= precio;
@@ -159,40 +198,53 @@ public class Animal {
             return false;
         }
     }
-
+    /**
+     * Reduce el nivel de hambre del animal, aumenta su felicidad y le otorga puntos de experiencia.
+     */
     public void comer() {
         hambre = Math.max(0, hambre - 20);
         felicidad = Math.min(100, felicidad + 10);
         ganarExperiencia(15);
         limitarValores();
     }
-
+    /**
+     * Realiza un paseo que consume energía del animal pero aumenta su felicidad y su experiencia.
+     */
     public void pasear() {
         energia = Math.max(0, energia - 10);
         felicidad = Math.min(100, felicidad + 10);
         ganarExperiencia(25);
         limitarValores();
     }
-
+    /**
+     * Ejecuta una sesión de juego disminuyendo la energía e incrementando la felicidad y experiencia del animal.
+     */
     public void jugar() {
         energia = Math.max(0, energia - 15);
         felicidad = Math.min(100, felicidad + 15);
         ganarExperiencia(30);
         limitarValores();
     }
-
+    /**
+     * Incrementa ligeramente la felicidad y otorga una pequeña cantidad de experiencia al bañar a la mascota.
+     */
     public void bañar() {
         felicidad = Math.min(100, felicidad + 5);
         ganarExperiencia(10);
         limitarValores();
     }
-
+    /**
+     * Asegura que las estadísticas de hambre, felicidad y energía se mantengan estrictamente dentro del rango de [0, 100].
+     */
     protected void limitarValores() {
         hambre = Math.max(0, Math.min(100, hambre));
         felicidad = Math.max(0, Math.min(100, felicidad));
         energia = Math.max(0, Math.min(100, energia));
     }
-
+    /**
+     * Añade experiencia al animal y maneja la lógica de subida de nivel cuando se alcanzan o superan los 100 puntos.
+     * * @param cantidad Cantidad de puntos de experiencia a sumar.
+     */
     public void ganarExperiencia(int cantidad) {
         this.experiencia += cantidad;
         if (this.experiencia >= 100) {
@@ -201,7 +253,9 @@ public class Animal {
             System.out.println("Felicidades, " + nombre + " ha subido al nivel " + nivel);
         }
     }
-
+    /**
+     * Simula el paso del tiempo aplicando un desgaste natural continuo sobre el hambre, la energía y la felicidad.
+     */
     public void actualizarEstado() {
         hambre += 2;
         energia -= 2;

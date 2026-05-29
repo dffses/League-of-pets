@@ -18,7 +18,13 @@ public class TorrePastel extends JPanel {
     private class PisoPastel {
         int x, ancho, y;
         Color color;
-
+        /**
+         * Inicializa las propiedades geométricas y cromáticas de un piso fijado.
+         * @param x Posición horizontal del piso.
+         * @param ancho Anchura recortada del piso.
+         * @param y Posición vertical del piso.
+         * @param color Color asignado al piso.
+         */
         public PisoPastel(int x, int ancho, int y, Color color) {
             this.x = x;
             this.ancho = ancho;
@@ -58,8 +64,10 @@ public class TorrePastel extends JPanel {
     };
 
     /**
-     * Constructor del panel. Configura los listeners del ratón y arranca la animación basculante.
-     * MODIFICADO: El constructor ahora también recibe a la mascota.
+     * Constructor principal que configura la interfaz del minijuego, inicializa el bucle de animación y gestiona los clics para apilar los pisos.
+     * @param cl El CardLayout encargado de controlar la navegación entre pantallas.
+     * @param cont El contenedor principal que aloja los diferentes paneles de la aplicación.
+     * @param mascota La instancia del objeto Animal activo que recibirá el desgaste y las monedas obtenidas.
      */
     public TorrePastel(CardLayout cl, JPanel cont, Animal mascota) {
         this.mascotaActual = mascota;
@@ -70,22 +78,22 @@ public class TorrePastel extends JPanel {
 
         colorActual = obtenerColorAleatorio();
 
-        // Ajustamos la posición inicial de vuelo para que empiece sincronizada con la nueva base.
+
         bloqueX = baseX;
 
-        // MODIFICADO: El botón de salir ahora también asegura dar las monedas acumuladas
+
         JButton btnSalir = new JButton("⬅ Salir");
         btnSalir.addActionListener(e -> {
             if (timer != null) timer.stop();
 
-            // Si sale a mitad de partida con pisos colocados, le damos sus monedas
+
             if (pisos > 0 && !juegoTerminado) {
                 int monedasGanadas = pisos * 5;
                 mascotaActual.ganarMonedas(monedasGanadas);
                 //cambios
                 mascotaActual.jugar();
                 mascotaActual.guardarPartidaCompleta();
-                JOptionPane.showMessageDialog(this, "Dejaste la tarta a medias. ¡Tu mascota ganó " + monedasGanadas + " monedas! 🪙");
+                JOptionPane.showMessageDialog(this, "Dejaste la tarta a medias. ¡Tu mascota ganó " + monedasGanadas + " monedas! ");
             }
             cl.show(cont, "PANTALLA_CUADRICULA");
         });
@@ -113,12 +121,12 @@ public class TorrePastel extends JPanel {
 
                 int desajuste = bloqueX - baseX;
 
-                // MODIFICADO: Bloque de control cuando la torre colapsa (Game Over)
+
                 if (Math.abs(desajuste) >= baseAncho) {
                     juegoTerminado = true;
                     timer.stop();
 
-                    // Calculamos: 5 monedas por cada piso colocado con éxito
+
                     int monedasGanadas = pisos * 5;
 
                     if (monedasGanadas > 0) {
@@ -129,7 +137,7 @@ public class TorrePastel extends JPanel {
 
                         actualizarInterfazPrincipal();
                         JOptionPane.showMessageDialog(TorrePastel.this,
-                                "¡La tarta se derrumbó!\nPisos totales: " + pisos + "\n¡Has ganado " + monedasGanadas + " monedas! 🪙",
+                                "¡La tarta se derrumbó!\nPisos totales: " + pisos + "\n¡Has ganado " + monedasGanadas + " monedas! ",
                                 "Fin del juego", JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(TorrePastel.this,
@@ -141,7 +149,7 @@ public class TorrePastel extends JPanel {
                     return;
                 }
 
-                // Cálculo de recorte geométrico de la rebanada según el desvío lateral
+
                 if (desajuste < 0) {
                     bloqueAncho += desajuste;
                     bloqueX = baseX;
@@ -161,7 +169,7 @@ public class TorrePastel extends JPanel {
 
                 colorActual = obtenerColorAleatorio();
 
-                // Efecto de scroll vertical de cámara si la torre supera la mitad de la pantalla
+
                 if (bloqueY < 100) {
                     for (PisoPastel piso : historialPisos) {
                         piso.y += bloqueAlto;
@@ -169,16 +177,22 @@ public class TorrePastel extends JPanel {
                     bloqueY += bloqueAlto;
                 }
 
-                // Aceleración lineal del ritmo de desplazamiento para aumentar la dificultad progresivamente
+
                 if (velocidad > 0) velocidad += 1; else velocidad -= 1;
             }
         });
     }
-
+    /**
+     * Selecciona de forma aleatoria un color del catálogo predefinido para pintar el próximo piso del pastel.
+     * @return Un objeto Color elegido al azar de la paleta de colores.
+     */
     private Color obtenerColorAleatorio() {
         return paletaColores[random.nextInt(paletaColores.length)];
     }
-
+    /**
+     * Renderiza los gráficos del minijuego, dibujando la mesa de soporte, los pisos ya colocados y la rebanada móvil.
+     * @param g El contexto de dibujo Graphics del componente.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -213,7 +227,9 @@ public class TorrePastel extends JPanel {
         g.setFont(new Font("Arial", Font.BOLD, 18));
         g.drawString("Capas de tarta: " + pisos, 20, 70);
     }
-
+    /**
+     * Recorre la estructura jerárquica de componentes para localizar el panel Interfaz y forzar la actualización visual del saldo de monedas.
+     */
     private void actualizarInterfazPrincipal() {
         Component parent = this.getParent();
         while (parent != null) {

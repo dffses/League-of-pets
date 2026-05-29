@@ -21,8 +21,10 @@ public class Sudoku extends JPanel {
     private Animal mascotaActual;
 
     /**
-     * Construye el entorno de celdas dividiéndolo en sub-bloques de 3x3 para respetar las reglas visuales.
-     * MODIFICADO: El constructor ahora también recibe a la mascota.
+     * Constructor principal que inicializa las matrices, genera el tablero lógico, oculta casillas y construye la interfaz visual dividida en regiones 3x3.
+     * @param cl El CardLayout encargado del flujo de navegación entre pantallas.
+     * @param cont El contenedor principal que aloja los distintos paneles.
+     * @param mascota El objeto Animal de la sesión actual que recibirá recompensas o desgaste.
      */
     public Sudoku(CardLayout cl, JPanel cont, Animal mascota) {
         // Asignamos la mascota
@@ -107,7 +109,11 @@ public class Sudoku extends JPanel {
     }
 
     /**
-     * Valida el número ingresado comparándolo directamente con la matriz solución.
+     * Comprueba si el valor numérico ingresado por el usuario coincide con la solución del tablero, gestionando la victoria o el error.
+     * @param f Índice de la fila de la casilla modificada.
+     * @param c Índice de la columna de la casilla modificada.
+     * @param cl El CardLayout para gestionar el cambio de pantalla.
+     * @param cont El contenedor principal de los paneles de la aplicación.
      */
     private void verificarCasilla(int f, int c, CardLayout cl, JPanel cont) {
         String texto = casillas[f][c].getText().trim();
@@ -149,9 +155,10 @@ public class Sudoku extends JPanel {
             registrarFallo(cl, cont);
         }
     }
-
     /**
-     * Lleva el control de fallos acumulados.
+     * Incrementa el contador de errores del jugador y fuerza el Game Over inmediato si se alcanza el número máximo permitido.
+     * @param cl El CardLayout para redirigir la navegación tras perder.
+     * @param cont El contenedor que alberga los paneles de la interfaz gráfica.
      */
     private void registrarFallo(CardLayout cl, JPanel cont) {
         fallos++;
@@ -165,15 +172,27 @@ public class Sudoku extends JPanel {
         }
     }
 
-    // Métodos lógicos del Sudoku se quedan exactamente igual...
+    /**
+     * Realiza una copia profunda de una matriz bidimensional de enteros.
+     * @param t La matriz bidimensional de origen.
+     * @return Una réplica idéntica e independiente de la matriz proporcionada.
+     */
     private int[][] copiar(int[][] t) {
         int[][] copia = new int[9][9];
         for (int i = 0; i < 9; i++) copia[i] = t[i].clone();
         return copia;
     }
-
+    /**
+     * Dispara el algoritmo recursivo de backtracking para rellenar de forma válida todas las celdas del tablero.
+     * @return true si se logra completar un tablero legal, false en caso contrario.
+     */
     private boolean generarTableroCompleto() { return resolver(0, 0); }
-
+    /**
+     * Algoritmo de backtracking que busca y asigna recursivamente números aleatorios válidos celda por celda.
+     * @param fila Fila por la que progresa la resolución.
+     * @param col Columna por la que progresa la resolución.
+     * @return true si la ruta de números actual conduce a una solución válida completa, false si entra en conflicto.
+     */
     private boolean resolver(int fila, int col) {
         if (fila == 9) return true;
         int siguienteFila = (col == 8) ? fila + 1 : fila;
@@ -188,7 +207,13 @@ public class Sudoku extends JPanel {
         }
         return false;
     }
-
+    /**
+     * Evalúa si un número puede colocarse legalmente en una casilla respetando las reglas de fila, columna y sub-bloque 3x3.
+     * @param fila Fila donde se intenta colocar el número.
+     * @param col Columna donde se intenta colocar el número.
+     * @param num El número que se desea verificar.
+     * @return true si la posición es legal de acuerdo a las reglas del Sudoku, false si está repetido.
+     */
     private boolean esValido(int fila, int col, int num) {
         for (int i = 0; i < 9; i++) {
             if (tablero[fila][i] == num || tablero[i][col] == num) return false;
@@ -202,7 +227,10 @@ public class Sudoku extends JPanel {
         }
         return true;
     }
-
+    /**
+     * Genera un array con los números del 1 al 9 ordenados de forma completamente aleatoria.
+     * @return Un array de enteros mezclados aleatoriamente.
+     */
     private int[] mezclarNumeros() {
         int[] nums = {1,2,3,4,5,6,7,8,9};
         for (int i = 0; i < nums.length; i++) {
@@ -213,7 +241,10 @@ public class Sudoku extends JPanel {
         }
         return nums;
     }
-
+    /**
+     * Vacía de forma aleatoria una cantidad determinada de celdas para crear los huecos del puzle jugable.
+     * @param cantidad El número total de casillas que se fijarán a cero.
+     */
     private void eliminarNumeros(int cantidad) {
         while (cantidad > 0) {
             int fila = aleatorio.nextInt(9);
@@ -224,7 +255,10 @@ public class Sudoku extends JPanel {
             }
         }
     }
-
+    /**
+     * Verifica si se han rellenado todas las casillas del tablero sin dejar ningún espacio en blanco.
+     * @return true si no quedan casillas con valor cero, false en caso contrario.
+     */
     private boolean completo() {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -234,7 +268,9 @@ public class Sudoku extends JPanel {
         return true;
     }
 
-
+    /**
+     * Rastrea hacia arriba los contenedores padres hasta dar con el panel principal de Interfaz para refrescar su visualizador de monedas.
+     */
     private void actualizarInterfazPrincipal() {
         Component parent = this.getParent();
         while (parent != null) {

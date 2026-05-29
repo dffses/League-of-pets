@@ -10,7 +10,9 @@ import animales.Especie;
 public class Menu extends JFrame {
     private JPanel contenedor;
     private CardLayout cards;
-
+    /**
+     * Inicializa el marco principal, dimensiones y añade el panel de inicio.
+     */
     public Menu() {
         setTitle("League of pets");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -22,7 +24,10 @@ public class Menu extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
-
+    /**
+     * Crea el panel de bienvenida con la imagen de portada interactiva.
+     * * @return JPanel con la portada y su listener de clic.
+     */
     private JPanel crearMenuInicio() {
         JPanel panel = new JPanel(new BorderLayout());
         java.net.URL urlPortada = getClass().getResource("league_of_pets.jpg");
@@ -43,7 +48,10 @@ public class Menu extends JFrame {
         panel.add(etiquetaPortada, BorderLayout.CENTER);
         return panel;
     }
-
+    /**
+     * Evalúa si existe una partida guardada en XML para cargarla
+     * o redirige al selector de mascotas.
+     */
     private void inicializarFlujoJuego() {
         Animal mascotaActiva = Animal.cargarPartidaXML();
 
@@ -67,7 +75,10 @@ public class Menu extends JFrame {
         contenedor.revalidate();
         contenedor.repaint();
     }
-
+    /**
+     * Genera y devuelve una nueva instancia del panel de inicio.
+     * * @return JPanel del menú inicial.
+     */
     public JPanel getMenuInicioPanel() {
         return crearMenuInicio();
     }

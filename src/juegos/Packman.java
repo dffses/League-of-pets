@@ -21,11 +21,11 @@ public class Packman extends JPanel implements KeyListener {
     private Timer relojJuego;
     private boolean victoria = false;
 
-    // Referencias para la navegación por pantallas
+
     private CardLayout cl;
     private JPanel cont;
 
-    // Mapa del laberinto: 1 = Pared, 0 = Fruta, 2 = Vacío
+
     private int[][] laberinto = {
             {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
             {1,0,0,0,1,0,0,0,0,0,1,0,0,0,1},
@@ -38,7 +38,12 @@ public class Packman extends JPanel implements KeyListener {
             {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
             {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
-
+    /**
+     * Constructor principal que inicializa el laberinto, configura los controles de teclado y arranca el temporizador de la partida.
+     * @param cl El CardLayout encargado del flujo de navegación entre pantallas.
+     * @param cont El contenedor principal que aloja los distintos paneles.
+     * @param mascota El objeto Animal que sufrirá el desgaste por jugar y recibirá las monedas correspondientes.
+     */
     public Packman(CardLayout cl, JPanel cont, Animal mascota) {
         this.cl = cl;
         this.cont = cont;
@@ -53,7 +58,7 @@ public class Packman extends JPanel implements KeyListener {
         this.setFocusable(true);
         this.addKeyListener(this);
 
-        // --- BOTÓN VOLVER ---
+
         JPanel panelNorte = new JPanel(new BorderLayout());
         panelNorte.setBackground(new Color(240, 240, 240));
 
@@ -71,14 +76,14 @@ public class Packman extends JPanel implements KeyListener {
         panelNorte.add(btnVolver, BorderLayout.WEST);
         this.add(panelNorte, BorderLayout.NORTH);
 
-        // Temporizador de 1 segundo
+
         relojJuego = new Timer(1000, e -> {
             if (tiempoRestante > 0) {
                 tiempoRestante--;
             } else {
                 juegoTerminado = true;
                 relojJuego.stop();
-                //cambio2 guardar cuando se agota el tiempo
+
                 if (mascotaActual != null) {
                     mascotaActual.jugar();
                     mascotaActual.guardarPartidaCompleta();
@@ -94,7 +99,9 @@ public class Packman extends JPanel implements KeyListener {
         });
         relojJuego.start();
     }
-
+    /**
+     * Recorre la matriz del laberinto al iniciar para registrar cuántas frutas hay disponibles en el mapa.
+     */
     private void contarFrutasIniciales() {
         for (int f = 0; f < FILAS; f++) {
             for (int c = 0; c < COLUMNAS; c++) {
@@ -104,7 +111,10 @@ public class Packman extends JPanel implements KeyListener {
             }
         }
     }
-
+    /**
+     * Dibuja los elementos en pantalla, incluyendo las paredes del laberinto, las frutas coleccionables, el jugador y el marcador inferior.
+     * @param g El contexto de dibujo Graphics del componente.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -164,7 +174,10 @@ public class Packman extends JPanel implements KeyListener {
             }
         }
     }
-
+    /**
+     * Procesa la entrada del teclado para mover al jugador por el laberinto, gestionando colisiones con muros, recolección de frutas y la victoria.
+     * @param e Evento del teclado que contiene la tecla de dirección presionada.
+     */
     @Override
     public void keyPressed(KeyEvent e) {
         if (juegoTerminado) return;
@@ -193,10 +206,10 @@ public class Packman extends JPanel implements KeyListener {
 
                     int recompensaMonedas = 100;
 
-                    // PROTECCIÓN: Si la mascota es null, evitamos que reviente la app
+
                     if (mascotaActual != null) {
                         mascotaActual.ganarMonedas(recompensaMonedas);
-                        //cambio3 despues de ganar
+
                         mascotaActual.jugar();
                         mascotaActual.guardarPartidaCompleta();
                         actualizarInterfazPrincipal();
@@ -219,7 +232,9 @@ public class Packman extends JPanel implements KeyListener {
 
     public void keyReleased(KeyEvent e) {}
     public void keyTyped(KeyEvent e) {}
-
+    /**
+     * Busca el componente Interfaz en el contenedor principal para sincronizar y refrescar visualmente las monedas y estadísticas de la mascota.
+     */
     private void actualizarInterfazPrincipal() {
         // Buscamos dinámicamente el panel Interfaz recorriendo el contenedor
         for (Component comp : cont.getComponents()) {
