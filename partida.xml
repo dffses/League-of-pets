@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<partida>
+    <nombre>Bran</nombre>
+    <especie>PERRO</especie>
+    <genero>Macho</genero>
+    <hambre>40</hambre>
+    <felicidad>100</felicidad>
+    <energia>0</energia>
+    <nivel>1</nivel>
+    <experiencia>70</experiencia>
+    <monedas>0</monedas>
+</partida>

@@ -27,3 +27,6 @@ Ahora hablare de las clases que hemos aprendido que serian las siguientes.
 
 - JPanel y JFrame: ambas sirven para darle un entorno grafico a java de forma sencilla, JPanel sirviendo como el contenido de la pantalla donde se define lo que quieres que apareza, en cambio Jframe es el contenedor que contiene todo el lienzo del JFrame y asi no pudiendo existir uno sin el otro.
 - KeyListener: es una interfaz la cual sirve para implementar las teclas de forma interactica en los programas, tiene tres programas a implementar, unos para al presionar la tecla, otro al solar y otro al escribir el caracter de la tecla.
+
+
+![diagrama.png](diagrama/diagrama.png)
